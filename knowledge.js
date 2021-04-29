@@ -91,4 +91,61 @@ async function getData() {
 /*                                                                                                   */
 /*****************************************************************************************************/
 
-// First chapter
+// Summary:
+// 1. ....
+
+
+
+
+// JSON Requests with D3
+async function draw() {
+    // 1. Get the Data from JSON source
+    const data = await d3.json("path-to-json-file");
+
+    // 2. Set the Dimensions of the chart + margins
+    let dimensions = {
+        width: 800,
+        height: 800,
+        margin: 50
+    };
+    // Set the container width and height according to the margin
+    dimensions.ctrWidth = dimensions.width - 2 * dimensions.margin
+    dimensions.ctrHeight = dimensions.height - 2 * dimensions.margin
+
+    // 3. Draw the Image (svg)
+    // This step will always be the same for all charts
+    const svg = d3.select("#chart")
+        .append("svg")
+        .attr("width", dimensions.width)
+        .attr("height", dimensions.height)
+
+    // 4. Append the container to the svg Element
+    // g Element does not support x and y coordinates --> use css translate to move to element to the right and down by the set margins
+    const ctr = svg.append("g")
+        .attr("transform", `translate(${dimensions.margin}, ${dimensions.margin})`)
+
+    // 5. Settings Scales to scale the data according to the plot size
+    const Xscale = d3.scaleLinear()
+                    .domain([d3.min(data), d3.max(data)]) // input the smallest and largest number of the dataset (d3.extend() is an alternative)
+                    .range([0, dimensions.ctrWidth]) // Set the ranges for how the data should be scaled (usually the height and width of the container are used)
+                    .nice() // rounds values to the nearest integer
+
+    const Yscale = d3.scaleLinear() // Do the same thing for the y-values
+
+    // 6. Creating the Elements
+    // An accessor function is a function that accesses a property in an object (preparing the data to be used correctly)
+    // Join the Dataset with the objects that should be created (in this case circles)
+    ctr.selectAll("circle")
+        .data(data)
+        .join("circle")
+        .attr("cx", (d) => Xscale(d))
+        .attr("cy", (d) => Yscale(d))
+        .attr("fill", "red") // Setting further properties
+        .attr("r", 5)
+
+
+
+}
+
+// call the function
+draw();
