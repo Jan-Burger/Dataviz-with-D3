@@ -92,9 +92,15 @@ async function getData() {
 /*****************************************************************************************************/
 
 // Summary:
-// 1. ....
-
-
+// 1. Get Data from a Data source
+// 2. Set the Dimensions of the chart + margins
+// 3. Draw the Image (svg)
+// 4. Append container (g-Element) to the svg Image
+// 5. Define Scales
+// 6. Create Elements with shapes
+// 7. Draw Axis
+// 8. Append Axis to a new g-Element and add them to the svg Image
+// 9. Adding Event and Animations --> coming soon
 
 
 // JSON Requests with D3
@@ -143,9 +149,33 @@ async function draw() {
         .attr("fill", "red") // Setting further properties
         .attr("r", 5)
 
+    // 7. Create Axis
+    // Create axis variables for all axis that should be used. Use the .scale() Method and pass in the according scale function
+    const xAxis = d3.axisBottom().scale(Xscale)
+    const yAxis = d3.axisLeft().scale(Yscale)
 
+    //8. Create another Group Element (g-Element) for each Axis inside the original container and call the Axis function on it
+    ctr.append("g").call(xAxis)
+        .style("transform", `translateY(xx px)`) // by default the axis appears on the coordinates 00 -->
+        // --> use the transform css method to translate the axis to the bottom (use container-height)
+    // for axis styling watch --> https://www.udemy.com/course/learn-d3js-for-data-visualization/learn/lecture/24168516#overview
+
+    // IMPORTANT : problem with Y-Axis because it will start from 00 like all values
+    // SOLUTION  : reverse the range-start and range-end in the Yscale function
+
+    // Further info for axis styling --> https://www.udemy.com/course/learn-d3js-for-data-visualization/learn/lecture/24168550#overview
 
 }
 
 // call the function
 draw();
+
+
+
+/*****************************************************************************************************/
+/*                                                                                                   */
+/*--------------------------------- Animations and interactivity ------------------------------------*/
+/*                                                                                                   */
+/*****************************************************************************************************/
+
+
