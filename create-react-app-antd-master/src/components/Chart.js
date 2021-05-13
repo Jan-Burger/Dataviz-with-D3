@@ -3,6 +3,16 @@ import * as d3 from "d3";
 
 const Chart = (props) => {
 
+    //const [chartWidth, setChartWidth] = useState(parseInt(d3.select(svgRef.current).style("width")));
+    //const [chartHeight, setChartHeight] = useState(parseInt(d3.select(svgRef.current).style("height")));
+    const [dimensions, setDimensions] = React.useState({
+    height: window.innerHeight,
+    width: window.innerWidth
+  })
+
+
+    //console.log(chartHeight, chartWidth)
+
     const startdate = props.startdate;
     const enddate = props.enddate;
     //const xvalues = props.xvalues;
@@ -27,12 +37,18 @@ const Chart = (props) => {
             dimensions.ctrWidth = dimensions.width - 2 * dimensions.margins
             dimensions.ctrHeight = dimensions.height - 2 * dimensions.margins
 
+            //let margin = {top: 20, right: 80, bottom: 30, left: 50};
+            //let width = parseInt(d3.select(svgRef.current).style("width"));
+            //console.log(width)
+            //let height = parseInt(d3.select(svgRef.current).style("height"));
+            //console.log(height)
 
             // Select the svgRef
             const svg = d3.select(svgRef.current)
-                .attr("width", dimensions.width)
-                .attr("height", dimensions.height)
+                //.attr("width", "100%")
+                //.attr("height", "100%")
                 .style("background-color", "red") // for testing purpose
+                //.attr("viewBox", `0 0 100% 100%`)
             //console.log(svg);
 
 
@@ -89,20 +105,70 @@ const Chart = (props) => {
             ctr.append("g")
                 .call(yAxisRight)
                 .style("transform", `translate(${dimensions.ctrWidth}px)`)
+                .attr("class", "y axis")
 
             const xAxis = d3.axisBottom(xScale)
 
             ctr.append("g")
                 .call(xAxis)
                 .style("transform", `translateY(${dimensions.ctrHeight}px)`)
+                .attr("class", "x axis")
+
+
+
+        //xScale.range([0, width]);
+        //yScale.range([height, 0]);
+
+        function handleResize() {
+        setDimensions({
+        height: window.innerHeight,
+        width: window.innerWidth
+      })
+            console.log({
+        height: window.innerHeight,
+        width: window.innerWidth
+    })
+        let width = parseInt(d3.select(svgRef.current).style("width")); // minus margins
+        console.log(width)
+        let height = parseInt(d3.select(svgRef.current).style("height"));
+        console.log(height)
+            xScale.range([0, width]);
+        yScale.range([height, 0]);
+
+        svg.select('.x.axis')
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+      svg.select('.y.axis')
+        .call(yAxisRight);
+
+}
+
+        window.addEventListener('resize', handleResize)
 
 
         }
 
+
+
+
+
+
     }, [data])
 
+
+
+    // Resizing Chart on window object change
+    useEffect(() => {
+        //let width = parseInt(d3.select(svgRef.current).style("width"));
+        //console.log(width)
+        //let height = parseInt(d3.select(svgRef.current).style("height"));
+        //console.log(height)
+    }, [])
+
+
     return (
-        <svg ref={svgRef}></svg>
+        <svg ref={svgRef} className="svgchart"></svg>
     );
 };
 
