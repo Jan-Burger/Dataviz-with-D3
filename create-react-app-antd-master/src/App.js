@@ -15,6 +15,7 @@ const App = () => {
     const [stockYValues, setStockYValues] = useState();
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState();
 
     // Fetching Stock Data from Alpha Vantage API
     async function fetchStockData () {
@@ -25,27 +26,32 @@ const App = () => {
 
         // Declaring API Key & Stock Symbol
         const API_KEY = 'HGJWFG4N8AQ66ICD';
-        let StockSymbol = 'FB';
+        let StockSymbol = 'TSLA';
 
         try {
-            const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${StockSymbol}&outputsize=compact&apikey=${API_KEY}`);
+            const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${StockSymbol}&outputsize=full&apikey=${API_KEY}`);
             if (!response.ok) {
                 throw new Error('Something went wrong!');
             }
             // If no Error --> Data gets logged!
             const data = await response.json();
-            let stocktXValuesFetched = [];
-            let stockYValuesFetched = [];
+            //console.log(data)
+
+            let fetchedData = []
 
             // loop over json data and extract relevant values (date and closeprice)
             for (let key in data['Time Series (Daily)']) {
-                    stocktXValuesFetched.push(key);
-                    stockYValuesFetched.push(data['Time Series (Daily)'][key]['4. close']);
+
+                let object = {
+                    date: key,
+                    close: data['Time Series (Daily)'][key]['4. close']
+                }
+                fetchedData.push(object)
+
             }
 
-            // Update the State of x and y values (copy Array with spread operator)
-            setStockXValues([...stocktXValuesFetched])
-            setStockYValues([...stockYValuesFetched])
+            // Update the State of the data
+            setData(fetchedData);
 
         } catch (error) {
               setError(error.message);
@@ -78,8 +84,7 @@ const App = () => {
             <Chart
             startdate = {startDate}
             enddate = {endDate}
-            xvalues = {stockXValues}
-            yvalues = {stockYValues}
+            data = {data}
             />
         </Row>
     </>
