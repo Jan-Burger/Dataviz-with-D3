@@ -18,7 +18,7 @@ const App = () => {
     const [data, setData] = useState();
 
     // Fetching Stock Data from Alpha Vantage API
-    async function fetchStockData () {
+    async function fetchStockData (StockSymbol) {
 
         // Updating Error and Loading States
         setIsLoading(true);
@@ -26,7 +26,7 @@ const App = () => {
 
         // Declaring API Key & Stock Symbol
         const API_KEY = 'HGJWFG4N8AQ66ICD';
-        let StockSymbol = 'TSLA';
+        //let StockSymbol = 'TSLA';
 
         try {
             const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${StockSymbol}&outputsize=full&apikey=${API_KEY}`);

@@ -11,6 +11,7 @@
     "craco-antd": "^1.19.0",
     "craco-less": "^1.17.0",
     "d3": "^6.7.0",
+    "rc-tween-one": "^2.7.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",

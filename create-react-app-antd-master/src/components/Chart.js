@@ -155,6 +155,7 @@ const Chart = (props) => {
 
         }
 
+        return () => {d3.select("g").remove()}
 
 
 

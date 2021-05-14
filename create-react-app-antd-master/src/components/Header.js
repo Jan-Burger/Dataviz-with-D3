@@ -2,6 +2,7 @@ import React from "react";
 import {Col, Row} from "antd";
 import { DatePicker, Space } from 'antd';
 import moment from 'moment';
+import EditableTagGroup from "./Tags";
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY/MM/DD';
@@ -24,6 +25,9 @@ const Header = (props) => {
             />
         </Col>
         <button onClick={props.fetchstockdata}>Fetch Data!</button>
+            <EditableTagGroup
+            fetchstockdata = {props.fetchstockdata}
+            />
         </>
     );
 };
