@@ -67,7 +67,7 @@ const App = () => {
         console.log(range[1].format());
     };
 
-    console.log(stockXValues)
+    //console.log(stockXValues)
     //console.log(stockYValues)
 
 

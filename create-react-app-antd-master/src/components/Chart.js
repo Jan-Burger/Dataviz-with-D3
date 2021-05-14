@@ -5,10 +5,8 @@ const Chart = (props) => {
 
     //const [chartWidth, setChartWidth] = useState(parseInt(d3.select(svgRef.current).style("width")));
     //const [chartHeight, setChartHeight] = useState(parseInt(d3.select(svgRef.current).style("height")));
-    const [dimensions, setDimensions] = React.useState({
-    height: window.innerHeight,
-    width: window.innerWidth
-  })
+
+    // margin of y left axis needs to be adjusted
 
 
     //console.log(chartHeight, chartWidth)
@@ -26,9 +24,16 @@ const Chart = (props) => {
 
     // Creating Chart in useEffect()
     useEffect(() => {
+        console.log("useEffect running...")
         if (data) {
-
+            console.log("stock data available")
             // Dimensions of the chart
+            const margin = 50
+            const ctrwidth = parseInt(d3.select(svgRef.current).style("width")) - 2 * margin; // minus margins
+            console.log("ctrwidth: ", ctrwidth)
+            const ctrheight = parseInt(d3.select(svgRef.current).style("height")) - 2 * margin;
+            console.log("ctrheight: ", ctrheight)
+
             let dimensions = {
                 width: 1600,
                 height: 800,
@@ -47,14 +52,14 @@ const Chart = (props) => {
             const svg = d3.select(svgRef.current)
                 //.attr("width", "100%")
                 //.attr("height", "100%")
-                .style("background-color", "red") // for testing purpose
+                .style("background-color", "white") // for testing purpose
                 //.attr("viewBox", `0 0 100% 100%`)
             //console.log(svg);
 
 
             // Creating Container inside the svg Element and transforming
             const ctr = svg.append("g")
-                .attr("transform", `translate(${dimensions.margins}, ${dimensions.margins})`)
+                .attr("transform", `translate(${margin}, ${margin})`)
 
 
             // Accessor functions (Preparing Data to be used by D3)
@@ -67,11 +72,11 @@ const Chart = (props) => {
             // Scales
             const xScale = d3.scaleUtc()
                 .domain(d3.extent(data, xAccessor))
-                .range([0, dimensions.ctrWidth])
+                .range([0, ctrwidth])
 
             const yScale = d3.scaleLinear()
                 .domain(d3.extent(data, yAccessor))
-                .range([dimensions.ctrHeight, 0])
+                .range([ctrheight, 0])
                 .nice()
             //console.log(xScale(xAccessor(xvalues[0])), xvalues[0])
 
@@ -90,6 +95,7 @@ const Chart = (props) => {
                 .attr("fill", "none")
                 .attr("stroke", "black")
                 .attr("stroke-width", 2)
+                .attr("class", "line") // later on add styles in app.less file and remove them here
 
 
             // Adding Axis
@@ -104,14 +110,14 @@ const Chart = (props) => {
 
             ctr.append("g")
                 .call(yAxisRight)
-                .style("transform", `translate(${dimensions.ctrWidth}px)`)
+                .style("transform", `translate(${ctrwidth}px)`)
                 .attr("class", "y axis")
 
             const xAxis = d3.axisBottom(xScale)
 
             ctr.append("g")
                 .call(xAxis)
-                .style("transform", `translateY(${dimensions.ctrHeight}px)`)
+                .style("transform", `translateY(${ctrheight}px)`)
                 .attr("class", "x axis")
 
 
@@ -120,28 +126,28 @@ const Chart = (props) => {
         //yScale.range([height, 0]);
 
         function handleResize() {
-        setDimensions({
-        height: window.innerHeight,
-        width: window.innerWidth
-      })
-            console.log({
-        height: window.innerHeight,
-        width: window.innerWidth
-    })
-        let width = parseInt(d3.select(svgRef.current).style("width")); // minus margins
+
+        let margins = 50
+        let width = parseInt(d3.select(svgRef.current).style("width")) - 2 * margins; // minus margins
         console.log(width)
-        let height = parseInt(d3.select(svgRef.current).style("height"));
+        let height = parseInt(d3.select(svgRef.current).style("height")) -  2 * margins;
         console.log(height)
-            xScale.range([0, width]);
+        xScale.range([0, width]);
         yScale.range([height, 0]);
 
         svg.select('.x.axis')
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+            .style("transform", `translateY(${height}px)`)
+            .call(xAxis);
 
-      svg.select('.y.axis')
-        .call(yAxisRight);
+        svg.select('.y.axis')
+            .style("transform", `translateX(${width}px)`)
+            .call(yAxisRight);
 
+        svg.selectAll('.line') //path
+            .attr("d", lineGenerator); // LineGenerator
+
+        xAxis.ticks(Math.max(width/75, 2));
+        yAxisRight.ticks(Math.max(height/50, 2));
 }
 
         window.addEventListener('resize', handleResize)
