@@ -63,8 +63,8 @@ const App = () => {
 
     // Handler Functions when changing Start or EndDate in Datepicker etc.
     const onDateChange = (range) => {
-        console.log(range[0].format());
-        console.log(range[1].format());
+        console.log(range[0].toISOString().slice(0, 10));
+        console.log(range[1].toISOString().slice(0, 10));
     };
 
     //console.log(stockXValues)
