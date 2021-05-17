@@ -27,6 +27,8 @@ const Chart = (props) => {
         console.log("useEffect running...")
         if (data) {
             console.log("stock data available")
+            console.log(data)
+
             // Dimensions of the chart
             const margin = 50
             const ctrwidth = parseInt(d3.select(svgRef.current).style("width")) - 2 * margin; // minus margins
