@@ -18,7 +18,7 @@ const App = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState();
-    const [rawData, setRawData] = useState();
+    const [rawData, setRawData] = useState({});
     const [percentageData, setPercentageData] = useState();
 
 
@@ -49,7 +49,8 @@ const App = () => {
 
                 let object = {
                     date: key,
-                    close: data['Time Series (Daily)'][key]['4. close']
+                    close: data['Time Series (Daily)'][key]['4. close'],
+                    stockSymbol: StockSymbol
                 }
                 fetchedData.push(object)
 
@@ -59,6 +60,12 @@ const App = () => {
             // Replace missing date and price values for days like sat and sun
             let fetchedDataOrderedFullDatesArray = getFullDatesArray([...fetchedDataOrdered])
 
+            // Create object and map stocksymbol to array
+            let stockObject = {}
+            stockObject[StockSymbol] = fetchedDataOrderedFullDatesArray
+
+            // update raw data
+            setRawData( (prevState) => { return {...prevState, ...stockObject}});
             // Update the State of the data
             setData(fetchedDataOrderedFullDatesArray);
 
@@ -82,14 +89,22 @@ const App = () => {
             console.log(new_data)
             setData(new_data);
         }
+    };
 
-
-
+    // Handle Remove Tag --> change raw data
+    const onTagRemove = (removedTag) => {
+        console.log(removedTag)
+        let newRawData = {...rawData}
+        delete newRawData[String(removedTag)];
+        console.log(newRawData)
+        // update Raw Data
+        setRawData(prevState => {return {...newRawData}})
 
     };
 
     //console.log(stockXValues)
     //console.log(stockYValues)
+    console.log(rawData)
 
 
     return (
@@ -98,6 +113,7 @@ const App = () => {
             <Header
             dateChangeHandler = {onDateChange}
             fetchstockdata = {fetchStockData}
+            onTagRemove = {onTagRemove}
             />
         </Row>
 

@@ -14,6 +14,8 @@ class EditableTagGroup extends React.Component {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
     console.log(tags);
     this.setState({ tags });
+    // Update raw Data when tag is removed
+    this.props.onTagRemove(removedTag)
   };
 
   showInput = () => {

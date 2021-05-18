@@ -27,6 +27,7 @@ const Header = (props) => {
         <button onClick={props.fetchstockdata}>Fetch Data!</button>
             <EditableTagGroup
             fetchstockdata = {props.fetchstockdata}
+            onTagRemove = {props.onTagRemove}
             />
         </>
     );

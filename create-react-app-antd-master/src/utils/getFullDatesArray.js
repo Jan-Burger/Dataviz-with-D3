@@ -31,7 +31,8 @@ const getFullDatesArray = (arr) => {
 
         let object = {
             date: date,
-            close: newClosePriceArr[index]
+            close: newClosePriceArr[index],
+            stockSymbol: arr[0].stockSymbol
         };
 
         resultArray.push(object);
