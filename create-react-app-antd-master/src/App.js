@@ -3,6 +3,7 @@ import { Row, Col } from 'antd';
 import './App.less';
 import Chart from "./components/Chart";
 import Header from "./components/Header";
+import calcPercentage from "./utils/calcPercentage";
 
 const App = () => {
 
@@ -49,9 +50,11 @@ const App = () => {
                 fetchedData.push(object)
 
             }
+            // Reverse Array to get correct order of dates
+            let fetchedDataOrdered = [...fetchedData].reverse();
 
             // Update the State of the data
-            setData(fetchedData);
+            setData(fetchedDataOrdered);
 
         } catch (error) {
               setError(error.message);
@@ -63,8 +66,20 @@ const App = () => {
 
     // Handler Functions when changing Start or EndDate in Datepicker etc.
     const onDateChange = (range) => {
-        console.log(range[0].toISOString().slice(0, 10));
-        console.log(range[1].toISOString().slice(0, 10));
+        if (range){
+            let startDate = range[0].format().slice(0, 10);
+            let endDate = range[1].format().slice(0, 10);
+            console.log(startDate, endDate)
+            console.log(data)
+
+            let new_data = calcPercentage(startDate, endDate, data);
+            console.log(new_data)
+            setData(new_data);
+        }
+
+
+
+
     };
 
     //console.log(stockXValues)

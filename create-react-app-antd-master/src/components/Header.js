@@ -19,7 +19,7 @@ const Header = (props) => {
         <>
         <Col span={5}>
             <RangePicker
-            defaultValue={[moment('2015/01/01', dateFormat), moment('2015/01/01', dateFormat)]}
+            defaultValue={[moment('2021/01/01', dateFormat), moment('2021/01/10', dateFormat)]}
             format={dateFormat}
             onChange={props.dateChangeHandler}
             />
