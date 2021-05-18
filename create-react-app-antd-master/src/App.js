@@ -4,6 +4,7 @@ import './App.less';
 import Chart from "./components/Chart";
 import Header from "./components/Header";
 import calcPercentage from "./utils/calcPercentage";
+import getFullDatesArray from "./utils/getFullDatesArray";
 
 const App = () => {
 
@@ -17,6 +18,9 @@ const App = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState();
+    const [rawData, setRawData] = useState();
+    const [percentageData, setPercentageData] = useState();
+
 
     // Fetching Stock Data from Alpha Vantage API
     async function fetchStockData (StockSymbol) {
@@ -52,9 +56,11 @@ const App = () => {
             }
             // Reverse Array to get correct order of dates
             let fetchedDataOrdered = [...fetchedData].reverse();
+            // Replace missing date and price values for days like sat and sun
+            let fetchedDataOrderedFullDatesArray = getFullDatesArray([...fetchedDataOrdered])
 
             // Update the State of the data
-            setData(fetchedDataOrdered);
+            setData(fetchedDataOrderedFullDatesArray);
 
         } catch (error) {
               setError(error.message);
