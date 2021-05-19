@@ -29,7 +29,8 @@ const calcPercentage = (start, end, arr) => {
 
         let object = {
             date: date,
-            close: closePrice
+            close: closePrice,
+            stockSymbol: arr[0].stockSymbol
         }
 
         new_arr.push(object)

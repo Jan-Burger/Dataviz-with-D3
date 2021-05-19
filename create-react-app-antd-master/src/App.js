@@ -9,8 +9,8 @@ import getFullDatesArray from "./utils/getFullDatesArray";
 const App = () => {
 
     // Declaring States
-    const [startDate, setStartDate] = useState();
-    const [endDate, setEndDate] = useState();
+    const [startDate, setStartDate] = useState("2020-01-01");
+    const [endDate, setEndDate] = useState("2020-12-31");
     const [them, setTheme] = useState();
     const [lineType, setLineType] = useState();
     const [stockXValues, setStockXValues] = useState();
@@ -19,7 +19,7 @@ const App = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState();
     const [rawData, setRawData] = useState({});
-    const [percentageData, setPercentageData] = useState();
+    const [percentageData, setPercentageData] = useState({});
 
 
     // Fetching Stock Data from Alpha Vantage API
@@ -40,7 +40,7 @@ const App = () => {
             }
             // If no Error --> Data gets logged!
             const data = await response.json();
-            //console.log(data)
+            console.log(data)
 
             let fetchedData = []
 
@@ -58,16 +58,24 @@ const App = () => {
             // Reverse Array to get correct order of dates
             let fetchedDataOrdered = [...fetchedData].reverse();
             // Replace missing date and price values for days like sat and sun
-            let fetchedDataOrderedFullDatesArray = getFullDatesArray([...fetchedDataOrdered])
+            let fetchedDataOrderedFullDatesArray = getFullDatesArray([...fetchedDataOrdered]);
+            setData(fetchedDataOrderedFullDatesArray);
 
             // Create object and map stocksymbol to array
-            let stockObject = {}
-            stockObject[StockSymbol] = fetchedDataOrderedFullDatesArray
+            let stockObjectRaw = {}
+            stockObjectRaw[StockSymbol] = fetchedDataOrderedFullDatesArray;
 
             // update raw data
-            setRawData( (prevState) => { return {...prevState, ...stockObject}});
-            // Update the State of the data
-            setData(fetchedDataOrderedFullDatesArray);
+            setRawData( (prevState) => { return {...prevState, ...stockObjectRaw}});
+
+            // update percentage data
+            let fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(startDate, endDate, fetchedDataOrderedFullDatesArray);
+
+            // Create object and map stocksymbol to array
+            let stockObjectPercent = {}
+            stockObjectPercent[StockSymbol] = fetchedDataOrderedFullDatesArrayPercentage
+
+            setPercentageData( (prevState) => { return {...prevState, ...stockObjectPercent}});
 
         } catch (error) {
               setError(error.message);
@@ -84,27 +92,41 @@ const App = () => {
             let endDate = range[1].format().slice(0, 10);
             console.log(startDate, endDate)
             console.log(data)
+            // Calc percentage of all stocks in raw data
+            let percentageData = {};
+            for (let key in rawData) {
+                 percentageData[key] = calcPercentage(startDate, endDate, rawData[key])
+            }
+            console.log(percentageData)
 
-            let new_data = calcPercentage(startDate, endDate, data);
-            console.log(new_data)
-            setData(new_data);
+            //let new_data = calcPercentage(startDate, endDate, data);
+            //console.log(new_data)
+            //setData(new_data);
         }
     };
 
-    // Handle Remove Tag --> change raw data
+    // Handle Remove Tag --> change Raw Data + percentage Data
     const onTagRemove = (removedTag) => {
         console.log(removedTag)
+
+        // Update Raw Data
         let newRawData = {...rawData}
         delete newRawData[String(removedTag)];
         console.log(newRawData)
-        // update Raw Data
         setRawData(prevState => {return {...newRawData}})
+
+        // Update Percentage Data
+        let newPercentageData = {...percentageData}
+        delete newPercentageData[String(removedTag)];
+        console.log(newPercentageData)
+        setPercentageData(prevState => {return {...newPercentageData}})
 
     };
 
     //console.log(stockXValues)
     //console.log(stockYValues)
     console.log(rawData)
+    console.log(percentageData)
 
 
     return (
@@ -122,6 +144,8 @@ const App = () => {
             startdate = {startDate}
             enddate = {endDate}
             data = {data}
+            rawData = {rawData}
+            percentageData = {percentageData}
             />
         </Row>
     </>

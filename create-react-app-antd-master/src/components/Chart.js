@@ -1,5 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 import * as d3 from "d3";
+import {nest} from 'd3-collection';
+import calcPercentage from "../utils/calcPercentage";
+import getFullDatesArray from "../utils/getFullDatesArray";
 
 const Chart = (props) => {
 
@@ -10,14 +13,26 @@ const Chart = (props) => {
 
 
     //console.log(chartHeight, chartWidth)
-
+    const defaultstartdate = "2020-01-01";
+    const defaultenddate = "2020-12-31";
     const startdate = props.startdate;
     const enddate = props.enddate;
     //const xvalues = props.xvalues;
     //const yvalues = props.yvalues;
     // data is an Array on Objects --> [{date: ..., price: ...}, ...]
     let data = props.data;
+    let rawData = props.rawData;
+    let percentageData = props.percentageData;
+    //let stock = percentageData["MSFT"];
+    //console.log(stock)
     // Dont forget to add --> if len data === 0: --> no data or to many requests
+
+    // Calc percentage of all stocks in raw data
+    //let percentageData = {};
+    //for (let key in rawData) {
+        //percentageData[key] = calcPercentage(defaultstartdate, defaultenddate, rawData[key])
+    //}
+    //console.log(percentageData)
 
     // Declaring svg Ref
     const svgRef = useRef();
@@ -25,9 +40,20 @@ const Chart = (props) => {
     // Creating Chart in useEffect()
     useEffect(() => {
         console.log("useEffect running...")
-        if (data) {
-            console.log("stock data available")
-            console.log(data)
+        if (!(Object.keys(percentageData).length === 0)) {
+            console.log("stock data available...")
+            console.log(percentageData)
+            //console.log(stock)
+            //console.log(percentageData)
+
+            // Transform Data into single Array
+            let DataArray= [];
+            for (let key in percentageData){
+                let array = percentageData[key];
+                array.forEach(element => DataArray.push(element));
+            }
+            console.log(DataArray);
+
 
             // Dimensions of the chart
             const margin = 50
@@ -73,11 +99,11 @@ const Chart = (props) => {
 
             // Scales
             const xScale = d3.scaleUtc()
-                .domain(d3.extent(data, xAccessor))
+                .domain(d3.extent(DataArray, xAccessor))
                 .range([0, ctrwidth])
 
             const yScale = d3.scaleLinear()
-                .domain(d3.extent(data, yAccessor))
+                .domain(d3.extent(DataArray, yAccessor))
                 .range([ctrheight, 0])
                 .nice()
             //console.log(xScale(xAccessor(xvalues[0])), xvalues[0])
@@ -89,15 +115,23 @@ const Chart = (props) => {
                 .y((d) => yScale(yAccessor(d)))
             //console.log(lineGenerator(data))
 
+            // Nest the Data to display multiple lines
+            const nestedData = nest()
+                .key(d => d.stockSymbol)
+                .entries(DataArray)
+
+            console.log(nestedData)
 
             // Adding Path Element to the container
-            ctr.append("path")
-                .datum(data)
-                .attr("d", lineGenerator)
+            ctr.selectAll(".line-path")
+                .data(nestedData)
+                .enter()
+                .append("path")
+                .attr("d", d => lineGenerator(d.values))
                 .attr("fill", "none")
                 .attr("stroke", "black")
                 .attr("stroke-width", 2)
-                .attr("class", "line") // later on add styles in app.less file and remove them here
+                .attr("class", "line-path") // later on add styles in app.less file and remove them here
 
 
             // Adding Axis
@@ -145,8 +179,8 @@ const Chart = (props) => {
             .style("transform", `translateX(${width}px)`)
             .call(yAxisRight);
 
-        svg.selectAll('.line') //path
-            .attr("d", lineGenerator); // LineGenerator
+        svg.selectAll('.line-path') //path
+            .attr("d", d => lineGenerator(d.values)); // LineGenerator
 
         xAxis.ticks(Math.max(width/75, 2));
         yAxisRight.ticks(Math.max(height/50, 2));
@@ -163,7 +197,7 @@ const Chart = (props) => {
 
 
 
-    }, [data])
+    }, [data, rawData, percentageData])
 
 
 
