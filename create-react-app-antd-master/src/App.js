@@ -2,9 +2,13 @@ import React, {useState} from 'react';
 import { Row, Col } from 'antd';
 import './App.less';
 import Chart from "./components/Chart";
-import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
 import calcPercentage from "./utils/calcPercentage";
 import getFullDatesArray from "./utils/getFullDatesArray";
+import { Layout, Menu } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee, faBars } from '@fortawesome/free-solid-svg-icons'
+
 
 const App = () => {
 
@@ -20,6 +24,15 @@ const App = () => {
     const [data, setData] = useState();
     const [rawData, setRawData] = useState({});
     const [percentageData, setPercentageData] = useState({});
+    // Mobile Side nav toggler
+    const [menuIsActive, setMenuIsActive] = useState(false);
+
+
+    // Menu Toggle handler
+    const menuToggler = () => {
+        setMenuIsActive((prevState) => {return !menuIsActive})
+        //console.log(menuIsActive)
+    }
 
 
     // Fetching Stock Data from Alpha Vantage API
@@ -57,6 +70,7 @@ const App = () => {
             }
             // Reverse Array to get correct order of dates
             let fetchedDataOrdered = [...fetchedData].reverse();
+            console.log(fetchedDataOrdered);
             // Replace missing date and price values for days like sat and sun
             let fetchedDataOrderedFullDatesArray = getFullDatesArray([...fetchedDataOrdered]);
             setData(fetchedDataOrderedFullDatesArray);
@@ -130,16 +144,29 @@ const App = () => {
 
 
     return (
-    <>
-        <Row className="header" align="middle" justify="center">
-            <Header
-            dateChangeHandler = {onDateChange}
-            fetchstockdata = {fetchStockData}
-            onTagRemove = {onTagRemove}
-            />
-        </Row>
+    <div className="container">
+        <div className={`overlay ${menuIsActive ? "overlay-active" : ""}`}onClick={menuToggler} ></div>
 
-        <Row className="chart">
+        <div className={`nav-sidebar ${menuIsActive ? "nav-active" : "nav-active-remove"}`}>
+            <div className="nav-sidebar-logo-area">
+
+            </div>
+            <div className="nav-sidebar-navigation-area">
+                <Sidebar
+                dateChangeHandler = {onDateChange}
+                fetchstockdata = {fetchStockData}
+                onTagRemove = {onTagRemove}
+                />
+            </div>
+        </div>
+
+        <div className="nav-top">
+            <div onClick={menuToggler} className="nav-top-menu-icon-area">
+                <FontAwesomeIcon icon={faBars} className="menu-icon" />
+            </div>
+        </div>
+
+        <div className="content">
             <Chart
             startdate = {startDate}
             enddate = {endDate}
@@ -147,11 +174,18 @@ const App = () => {
             rawData = {rawData}
             percentageData = {percentageData}
             />
-        </Row>
-    </>
-    );
+        </div>
 
+        <div className="footer">
+
+        </div>
+    </div>
+    );
 };
 
 export default App;
 // idea --> dropdown to change stocks
+
+
+
+

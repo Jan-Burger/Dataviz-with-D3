@@ -37,7 +37,7 @@ const Chart = (props) => {
     // Declaring svg Ref
     const svgRef = useRef();
 
-    // Creating Chart in useEffect()
+    // Creating Line Chart in useEffect()
     useEffect(() => {
         console.log("useEffect running...")
         if (!(Object.keys(percentageData).length === 0)) {
@@ -140,7 +140,9 @@ const Chart = (props) => {
 
             ctr.append("g")
                 .call(yAxisLeft)
+            /*
 
+             */
             const yAxisRight = d3.axisRight(yScale)
                 .tickFormat((label) => `$${label}`)
 

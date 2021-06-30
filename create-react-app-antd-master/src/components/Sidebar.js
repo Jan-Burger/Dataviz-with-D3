@@ -10,10 +10,9 @@ const monthFormat = 'YYYY/MM';
 const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 const customFormat = value => `custom format: ${value.format(dateFormat)}`;
 
+// <button onClick={props.fetchstockdata}>Fetch Data!</button>
 
-const Header = (props) => {
-
-
+const Sidebar = (props) => {
 
     return(
         <>
@@ -24,7 +23,6 @@ const Header = (props) => {
             onChange={props.dateChangeHandler}
             />
         </Col>
-        <button onClick={props.fetchstockdata}>Fetch Data!</button>
             <EditableTagGroup
             fetchstockdata = {props.fetchstockdata}
             onTagRemove = {props.onTagRemove}
@@ -33,4 +31,4 @@ const Header = (props) => {
     );
 };
 
-export default Header;
+export default Sidebar;

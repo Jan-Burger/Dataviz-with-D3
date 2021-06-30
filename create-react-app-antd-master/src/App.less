@@ -14,3 +14,685 @@
   height: 100%;
   border: 10px solid brown;
 }
+
+// Layout
+
+.container {
+    display: grid;
+    grid-template-columns: 250px auto;
+    grid-template-rows: 70px auto 60px;
+    grid-template-areas:
+        "nav-sidebar nav-top"
+        "nav-sidebar content"
+        "nav-sidebar footer";
+
+}
+
+.nav-top {
+    grid-area: nav-top;
+}
+
+.nav-sidebar {
+    grid-area: nav-sidebar;
+}
+
+.content {
+    grid-area: content;
+    padding: 30px 20px 30px 20px;
+    min-height: calc(100vh - 130px);
+}
+.footer {
+    grid-area: footer;
+    width: 100%;
+    background-color: #DFE6ED;
+    box-shadow: 1px 1px 1px 1px #bac4ce!important;
+    position: relative;
+    font-size: 15px;
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+        "footer-left footer-middle footer-right";
+}
+/*
+.footer-left {
+    grid-area: footer-left;
+    display: grid;
+    align-items: center;
+}
+.footer-middle {
+    grid-area: footer-middle;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+.footer-right {
+    grid-area: footer-right;
+    display: grid;
+    align-items: center;
+    justify-content: right;
+}
+.footer-right-div {
+    //background-color: white;
+    margin-right: 20px;
+}
+#footer-right-div-a-left {
+    margin-right: 10px;
+}
+.footer-right-div a {
+    color: $color-text;
+}
+.footer-middle-div a {
+    color: $color-text;
+}
+.footer-middle-div a:hover {
+    color: $color-primary-green;
+}
+.footer-right-div a:hover {
+    color: $color-primary-green;
+}
+.footer-left-div {
+    margin-left: 20px;
+    color: $color-text;
+}
+.footer-left-div a {
+    color: $color-text;
+}
+.footer-left-div a:hover {
+    color: $color-primary-green;
+}
+.footer-left-div > a:last-of-type {
+    color: $color-primary-green!important;
+}
+*/
+/*
+// Breadcrumb
+.breadcrumb {
+    grid-area: breadcrumb;
+    display: grid;
+    align-items: center;
+    justify-content: start;
+    //border-top: 1px solid $color-nav-sidebar-background;
+    background-color: $color-content-background;
+    //color: white;
+    box-shadow: 1px 1px 1px 1px #bac4ce;
+
+}
+.breadcrumb-div {
+    margin-left: 20px;
+}
+.breadcrumb-div > a:last-of-type {
+    color: $color-primary-green!important;
+}
+.breadcrumb-div > a{
+    color: $color-text;
+}
+.breadcrumb-div > a:hover{
+    color: $color-primary-green;
+}
+
+
+
+.bread-test {
+    width: 100%;
+    height: 40px;
+    //background-color: $color-nav-top-background;
+    display: grid;
+    align-items: center;
+    justify-content: start;
+    color: $color-text;
+    border-bottom: 1px solid $color-nav-top-background;
+}
+*/
+
+
+
+// Site Layout - Mobile and Tablet (Breakpoint 990px)
+@media screen and (max-width: 950px) {
+
+    .container {
+        display: grid;
+        //margin-bottom: -72px;
+        grid-template-columns: 100%;
+        grid-template-rows: 50px auto 150px!important;
+        grid-template-areas:
+            "top-nav"
+            "content"
+            "footer-mobile";
+    }
+
+    .nav-top {
+        grid-area: top-nav;
+    }
+
+    .content {
+        grid-area: content;
+        min-height: calc(100vh - 100px);
+    }
+
+    .footer {
+        grid-area: footer-mobile;
+        //width: 100%;
+        height: auto;
+        background-color: #DFE6ED;
+        //box-shadow: 1px 1px 1px 1px #bac4ce!important;
+        font-size: 15px;
+        //margin-bottom: -50px;
+        display: grid;
+        grid-template-rows: 1fr 1fr 1fr;
+        grid-template-columns: auto;
+        grid-template-areas:
+            "footer-left"
+            "footer-middle"
+            "footer-right";
+        //display: none;
+    }
+
+    /*
+    .footer-left {
+        grid-area: footer-left;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        //margin-top: 25px;
+        background-color: $color-nav-top-background;
+    }
+    .footer-middle {
+        grid-area: footer-middle;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        //margin-top: 25px;
+        background-color: $color-nav-top-background;
+    }
+    .footer-right {
+        grid-area: footer-right;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        //margin-top: 25px;
+        background-color: $color-nav-top-background;
+    }
+    .footer-right-div {
+        //background-color: white;
+        margin-right: 0;
+    }
+    .footer-left-div {
+        margin-left: 0;
+        color: $color-text;
+    }
+    .breadcrumb {
+        display: none!important;
+    }
+    */
+
+    // Nav-Sidebar beeing pushed -100% on x-axis --> body overflow-x: hidden
+    .nav-sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 300px;
+        transform: translateX(-100%);
+    }
+
+}
+
+
+
+
+// Nav sidebar
+
+.nav-sidebar {
+    background-color: #57697A;
+    z-index: 2;
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    overflow-y: auto; // enables scrolling in sidebar
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 70px auto;
+    grid-template-areas:
+    "logo"
+    "navigation";
+}
+
+// Two areas --> Logo and Navigation
+
+// Logo area
+.nav-sidebar-logo-area {
+    grid-area: logo;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+    //border-bottom: 1px solid #DFE6ED;
+    //background-color: blue;
+}
+
+
+// Navigation area
+.nav-sidebar-navigation-area {
+    grid-area: navigation;
+    box-shadow: 10px 10px 10px 0px #bac4ce;
+}
+/*
+nav ul{
+    height: 100%;
+    width: 100%;
+    list-style: none;
+}
+
+nav ul li a{
+    position: relative;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 14px;
+    padding: 17px;
+    display: block;
+    width: 100%;
+}
+
+nav ul li.active a{
+    background-color: $color-primary-green;
+    color: white;
+}
+nav ul li.active a:hover {
+    background-color: $color-primary-green;
+    color: white;
+}
+
+nav ul li a:hover{
+    color: white;
+    background-color: $color-nav-sidebar-menu-icon-hover;
+}
+
+nav ul ul{
+    //display: none;
+    //opacity: 0;
+    max-height: 0;
+    width: 100%;
+    overflow: hidden;
+    background-color: #43515E;
+    -webkit-transition: max-height 0.35s;
+    -moz-transition: max-height 0.35s;
+    -ms-transition: max-height 0.35s;
+    -o-transition: max-height 0.35s;
+    transition: max-height 0.35s;
+}
+.feat-btn.active {
+    background-color: #43515E;
+    color: white;
+}
+.serv-btn.active {
+    background-color: #43515E;
+    color: white;
+}
+
+nav ul .feat-show.show{
+    max-height: 240px;
+}
+
+nav ul .serv-show.show1{
+    max-height: 80px;
+}
+
+nav ul ul li a{
+    padding: 12px 17px 12px 50px;
+}
+
+nav ul li.active ul li a{
+    color: rgba(255, 255, 255, 0.65);
+
+}
+
+nav ul ul li a:hover{
+    color: white !important;
+    background-color: $color-nav-sidebar-menu-icon-hover !important;
+}
+
+nav ul li a span{
+    float: right;
+    //margin-right: 15px;
+    //transform: translateY(-50%);
+    //font-size: 22px;
+    transition: transform 0.35s;
+}
+nav ul li a span.rotate{
+    transform: rotate(90deg);
+}
+.nav-sidebar-menu-icon {
+    margin-right: 5px;
+}
+
+*/
+/*
+// Individual styling of sidebar active links
+#menu-item-home {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#menu-item-home a {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#menu-item-home:hover {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#menu-item-home a:hover{
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+
+#menu-item-tech-aktien {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#menu-item-tech-aktien a {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#menu-item-tech-aktien:hover {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#menu-item-tech-aktien a:hover{
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+*/
+
+/*
+#navbar-menu-item-active {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#navbar-menu-item-active a {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#navbar-menu-item-active:hover {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+#navbar-menu-item-active a:hover {
+    background-color: $color-primary-green !important;
+    color: white !important;
+}
+*/
+
+// Nav-Sidebar Tablet and Mobile behaviour
+@media screen and (max-width: 950px) {
+
+    // Setting Mobile logo area to 50px
+    .nav-sidebar {
+        grid-template-columns: 100%;
+        grid-template-rows: 50px auto;
+    }
+
+
+    // onclick javascript --> Adding class .nav-active to Nav-Sidebar
+    .nav-active {
+        transform: translateX(0%);
+        transition: transform 0.35s ease-in;
+    }
+
+    // onclick javascript --> Adding class .nav-active-remove to Nav-Sidebar
+    .nav-active-remove {
+        transform: translateX(-100%);
+        transition: transform 0.35s ease-out;
+    }
+
+    // onclick javascript --> Adding class .overlay-active to normally hidden overlay
+    .overlay-active {
+        position: fixed; /* Sit on top of the page content */
+        width: 100%; /* Full width (cover the whole page) */
+        height: 100%; /* Full height (cover the whole page) */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.35); /* Black background with opacity */
+        z-index: 1; /* Specify a stack order */
+    }
+}
+
+// NAvigation top
+
+.nav-top {
+    background-color: #DFE6ED;
+    box-shadow: 1px 1px 1px 1px #bac4ce;
+    display: grid;
+    grid-template-columns: 50px 175px 1fr;
+    grid-template-rows: 100%;
+    grid-template-areas:
+    "menu-icon free-space main-nav";
+}
+
+// Nav-Top Menu Icon area
+.nav-top-menu-icon-area {
+    grid-area: menu-icon;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}
+
+// Nav-Top free space area
+.nav-top-free-space {
+    display: grid;
+    grid-area: free-space;
+    align-items: center;
+    justify-content: start;
+    min-width: 175px;
+    //align-content: center;
+    //justify-items: center;
+    //background-color: blue; --> used for testing purpose
+}
+
+// Nav-Top Navigation area
+.nav-top-navigation-area {
+    grid-area: main-nav;
+    display: grid;
+    align-items: center;
+    align-content: center;
+    justify-content: end;
+    justify-items: end;
+}
+/*
+.nav-top-navigation-area-buttons {
+    margin-right: 20px;
+}
+
+.button-stock-overview-page {
+    background-color: $color-primary-green;
+    color: #ffffff;
+    padding: 0.65rem 0.75rem;
+    //margin-bottom: 20px;
+    //margin-top: -35px;
+    font-weight: 400;
+    display: inline;
+    font-size: 0.95rem;
+    //letter-spacing: 0.5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.button-stock-overview-page:hover {
+    background-color: $color-button-hover;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+#load-historical-data {
+    margin-right: 7.5px!important;
+}
+
+
+
+// Search Form in nav top
+.form__item {
+    display: inline;
+}
+#search {
+    background-color: $color-nav-top-background;
+    border: none;
+    height: 20px;
+    font-size: 18px;
+    width: 140px;
+    color: $color-text;
+}
+#search:focus {
+    outline: none;
+}
+
+.fa-search {
+    font-size: 18px;
+    margin-right: 2.5px;
+}
+
+#submit {
+    display: none;
+}
+.form {
+    margin-left: -25px;
+}
+
+
+
+
+
+// Nav-Top Navigation area list
+.nav-top-navigation-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 25px;
+}
+.nav-top-navigation-list li {
+    display: inline-block;
+}
+
+// List Part 1 (bell icon + news icon)
+#nav-top-bell-icon {
+    font-size: 18px;
+    color: $color-text;
+    cursor: pointer;
+    padding-right: 20px;
+}
+#nav-top-bell-icon:hover {
+    color: $color-primary-green;
+}
+#nav-top-news-icon {
+    font-size: 18px;
+    color: $color-text;
+    cursor: pointer;
+    padding-right: 20px;
+}
+#nav-top-news-icon:hover {
+    color: $color-primary-green;
+}
+
+// List Part 2 (image and text)
+.nav-top-navigation-list-profile-area-list {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    cursor: pointer;
+    color: $color-text;
+}
+.nav-top-navigation-list-profile-area-list:hover {
+    color: $color-primary-green;
+}
+.nav-top-profile-image {
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    background-color: $color-text; // just a placeholder --> insert background IMG later
+    border-radius: 4px;
+}
+.nav-top-navigation-text {
+    font-weight: normal;
+    letter-spacing: 0.35px;
+    padding: 5px 8px 5px 12px;
+    display: inline;
+    white-space: nowrap;
+}
+#nav-top-navigation-arrow-down {
+    padding: 6px 0px;
+}
+
+
+// Dropdown menu
+.dropdown-content {
+    display: none;
+    right: -12px;
+    top: 45px;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0.5px 0.5px 0.5px 0.5px lightgrey;
+}
+.dropdown-show {
+    display: block;
+    z-index: 9;
+}
+.dropdown-active-color {
+    color: $color-primary-green;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 12px 85px 12px 15px;
+    color: $color-text;
+}
+.dropdown-content a:hover {
+    color: $color-primary-green;
+    background-color: whitesmoke;
+}
+.nav-top-dropdown-icon {
+    display: inline !important;
+    margin-right: 8px;
+    color: $color-primary-green;
+}
+.dropdown-icon-divider {
+    height: 1px;
+    width: 100%;
+    background-color: $color-nav-top-background;
+}
+.dropdown-content-active {
+    color: $color-primary-green;
+}
+*/
+// Menu-icon (Deskop display None)
+.menu-icon {
+    justify-self: start;
+    font-size: 24px;
+    display: none;
+    color: #7EC433;
+    cursor: pointer;
+}
+
+// Menu-icon (Tablet and Mobile display inline)
+@media screen and (max-width: 950px) {
+    .menu-icon {
+        display: inline;
+    }
+}
+/*
+@media screen and (max-width: 950px) {
+   .form {
+       margin-left: 10px;
+   }
+   .button-stock-overview-page {
+       font-size: -1rem;
+       padding: 0.45rem 0.55rem;
+   }
+
+}
+@media screen and (max-width: 760px) {
+    .button-stock-overview-page span {
+        display: none;
+    }
+
+}
+
+*/
+
+// Footer
+
