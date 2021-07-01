@@ -100,7 +100,7 @@ class EditableTagGroup extends React.Component {
         )}
         {!inputVisible && (
           <Tag onClick={this.showInput} className="site-tag-plus">
-            <PlusOutlined /> New Tag
+            <PlusOutlined /> Add Stock
           </Tag>
         )}
       </>

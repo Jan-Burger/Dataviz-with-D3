@@ -9,7 +9,7 @@ import { Layout, Menu } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faBars } from '@fortawesome/free-solid-svg-icons'
 
-
+// https://stackoverflow.com/questions/60091618/react-daterangepicker-mobile-friendly
 const App = () => {
 
     // Declaring States

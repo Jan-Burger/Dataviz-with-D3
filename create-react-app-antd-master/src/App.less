@@ -1,4 +1,7 @@
 @import '~antd/dist/antd.less';
+p {
+    margin: 0;
+}
 
 .header {
   background-color: blue;
@@ -274,9 +277,54 @@
 
 // Navigation area
 .nav-sidebar-navigation-area {
+    padding: 20px 10px;
     grid-area: navigation;
     box-shadow: 10px 10px 10px 0px #bac4ce;
 }
+
+.sidebar-dateselector-section{
+    margin-bottom: 35px;
+}
+
+.sidebar-datepicker-section {
+    margin-bottom: 35px;
+}
+.sidebar-taggroup-section {
+    margin-bottom: 35px;
+}
+.sidebar-theme-section {
+    margin-bottom: 35px;
+}
+
+.sidebar-section-headline {
+    color: rgba(255, 255, 255, 0.75);
+    //font-weight: bold;
+    font-size: 15px;
+}
+.sidebar-section-headline-icon{
+    margin-right: 7.5px;
+}
+.sidebar-section-headline-icon-info {
+    margin-left: 4px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.theme-button-grid {
+    display: grid;
+    justify-content: center;
+}
+.sidebar-section-theme-icon {
+    margin-right: 5px;
+}
+
+.ant-tag {
+    margin-top: 5px!important;
+    margin-bottom: 5px!important;
+}
+
+
 /*
 nav ul{
     height: 100%;
