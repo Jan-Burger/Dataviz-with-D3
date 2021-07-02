@@ -32,34 +32,42 @@ const App = () => {
     const [colors, setColors] = useState([ "#DFE6ED", "#bac4ce", "#57697A", "#7EC433"]);
 
 
-    // Menu Toggle handler
+    // Menu Toggle Handler
     const menuToggler = () => {
+        // set MenuIsActive to the opposite state from previous --> this toggles the menu on and off
         setMenuIsActive((prevState) => {return !menuIsActive})
-        //console.log(menuIsActive)
     }
 
     // Update Legend with new stock ticker symbols if new stocks are selected in the sidebar
     const updateLegend = (newTickerSymbol) => {
-        // Update Legend and add the new stock ticker symbol to it
+        // Set nextColor to an empty string
         let nextColor = ""
-        colors.some((color) => {
-            console.log(color)
-            console.log(legend)
-            console.log(Object.values(legend))
 
+        // Loop over all predefined colors in color-state
+        colors.some((color) => {
+            //console.log(color)
+            //console.log(legend)
+            //console.log(Object.values(legend))
+
+            // If a color from the colors-array does not exist in the legend object --> nextColor will be set to the value of the current color in the array
             if (!(Object.values(legend).includes(color))){
                 console.log("Condition True")
                 nextColor = color
                 return false
             }
         })
+        // Update the sate of the legend key = new ticker symbol, value = value of nextColor
         setLegend((prevState => {return {...prevState, [newTickerSymbol]: nextColor}}));
     };
+
     // Delete Ticker symbol from legend if the tag was removed in the sidebar
     const deleTSFromLegend = (removedTag) => {
-        console.log(removedTag);
+        //console.log(removedTag);
+        // Get the current values from the legend
         let newLegend = {...legend};
+        // Delete the value in the legend object that was selected in the sidebar
         delete newLegend[removedTag];
+        // Update the legend values
         setLegend((prevState) => { return newLegend});
     };
 
@@ -170,6 +178,7 @@ const App = () => {
     //console.log(stockYValues)
     console.log(rawData)
     console.log(percentageData)
+    console.log("Legend data:", legend)
 
 
     return (
@@ -205,6 +214,7 @@ const App = () => {
 
         <div className="content">
             <Chart
+            legend = {legend}
             startdate = {startDate}
             enddate = {endDate}
             data = {data}

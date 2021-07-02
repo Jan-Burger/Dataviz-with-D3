@@ -23,6 +23,8 @@ const Chart = (props) => {
     let data = props.data;
     let rawData = props.rawData;
     let percentageData = props.percentageData;
+    let legendColors = props.legend;
+
     //let stock = percentageData["MSFT"];
     //console.log(stock)
     // Dont forget to add --> if len data === 0: --> no data or to many requests
@@ -52,11 +54,12 @@ const Chart = (props) => {
                 let array = percentageData[key];
                 array.forEach(element => DataArray.push(element));
             }
+            console.log("Data Array in next line:")
             console.log(DataArray);
 
 
             // Dimensions of the chart
-            const margin = 50
+            const margin = 50;
             const ctrwidth = parseInt(d3.select(svgRef.current).style("width")) - 2 * margin; // minus margins
             console.log("ctrwidth: ", ctrwidth)
             const ctrheight = parseInt(d3.select(svgRef.current).style("height")) - 2 * margin;
@@ -80,7 +83,7 @@ const Chart = (props) => {
             const svg = d3.select(svgRef.current)
                 //.attr("width", "100%")
                 //.attr("height", "100%")
-                .style("background-color", "white") // for testing purpose
+                .style("background-color", "#F7FAFC") // for testing purpose
                 //.attr("viewBox", `0 0 100% 100%`)
             //console.log(svg);
 
@@ -122,6 +125,20 @@ const Chart = (props) => {
 
             console.log(nestedData)
 
+
+            console.log("Colors data from legend:")
+            let colors = [];
+            for (const [key, value] of Object.entries(legendColors)) {
+                colors.push(legendColors[key])
+            }
+            console.log(colors);
+
+            // color scheme
+            let res = nestedData.map(function(d){ return d.key }) // list of group names
+            let color = d3.scaleOrdinal()
+                .domain(res)
+                .range(colors)
+
             // Adding Path Element to the container
             ctr.selectAll(".line-path")
                 .data(nestedData)
@@ -129,35 +146,39 @@ const Chart = (props) => {
                 .append("path")
                 .attr("d", d => lineGenerator(d.values))
                 .attr("fill", "none")
-                .attr("stroke", "black")
+                .attr("stroke", d => color(d.key))
                 .attr("stroke-width", 2)
                 .attr("class", "line-path") // later on add styles in app.less file and remove them here
 
 
-            // Adding Axis
+            // --- Adding Axis --- //
+
+            // Y Axis left
             const yAxisLeft = d3.axisLeft(yScale)
-                .tickFormat((label) => `$${label}`)
+                .tickFormat((label) => `${label}%`)
 
             ctr.append("g")
                 .call(yAxisLeft)
-            /*
+                .attr("class", "y axis-left")
 
-             */
+
+            // Y Axis right
             const yAxisRight = d3.axisRight(yScale)
-                .tickFormat((label) => `$${label}`)
+                .tickFormat((label) => `${label}%`)
 
             ctr.append("g")
                 .call(yAxisRight)
                 .style("transform", `translate(${ctrwidth}px)`)
-                .attr("class", "y axis")
+                .attr("class", "y axis-right")
 
+
+            // Axis Bottom
             const xAxis = d3.axisBottom(xScale)
 
             ctr.append("g")
                 .call(xAxis)
                 .style("transform", `translateY(${ctrheight}px)`)
                 .attr("class", "x axis")
-
 
 
         //xScale.range([0, width]);
@@ -177,15 +198,19 @@ const Chart = (props) => {
             .style("transform", `translateY(${height}px)`)
             .call(xAxis);
 
-        svg.select('.y.axis')
+        svg.select('.y.axis-right')
             .style("transform", `translateX(${width}px)`)
             .call(yAxisRight);
+
+        svg.select('.y.axis-left')
+            .call(yAxisLeft);
 
         svg.selectAll('.line-path') //path
             .attr("d", d => lineGenerator(d.values)); // LineGenerator
 
         xAxis.ticks(Math.max(width/75, 2));
         yAxisRight.ticks(Math.max(height/50, 2));
+        yAxisLeft.ticks(Math.max(height/50, 2));
 }
 
         window.addEventListener('resize', handleResize)
