@@ -67,6 +67,11 @@ const Sidebar = (props) => {
                 </Tooltip>
                 </p>
                 <EditableTagGroup
+                setLegend = {props.setLegend}
+                legend = {props.legend}
+                colors = {props.colors}
+                deleteTSFromLegend = {props.deleteTSFromLegend}
+                updateLegend = {props.updateLegend}
                 fetchstockdata = {props.fetchstockdata}
                 onTagRemove = {props.onTagRemove}
                 />
@@ -80,7 +85,6 @@ const Sidebar = (props) => {
                     </div>
                 </div>
             </div>
-
         </>
     );
 };

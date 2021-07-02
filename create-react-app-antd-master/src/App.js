@@ -7,7 +7,8 @@ import calcPercentage from "./utils/calcPercentage";
 import getFullDatesArray from "./utils/getFullDatesArray";
 import { Layout, Menu } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faBars } from '@fortawesome/free-solid-svg-icons'
+import { faCoffee, faBars, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
+import { LineOutlined, StockOutlined, LineChartOutlined } from '@ant-design/icons';
 
 // https://stackoverflow.com/questions/60091618/react-daterangepicker-mobile-friendly
 const App = () => {
@@ -15,7 +16,7 @@ const App = () => {
     // Declaring States
     const [startDate, setStartDate] = useState("2020-01-01");
     const [endDate, setEndDate] = useState("2020-12-31");
-    const [them, setTheme] = useState();
+    const [theme, setTheme] = useState("Light");
     const [lineType, setLineType] = useState();
     const [stockXValues, setStockXValues] = useState();
     const [stockYValues, setStockYValues] = useState();
@@ -26,6 +27,9 @@ const App = () => {
     const [percentageData, setPercentageData] = useState({});
     // Mobile Side nav toggler
     const [menuIsActive, setMenuIsActive] = useState(false);
+    // Legend state with current stocks selected
+    const [legend, setLegend] = useState({});
+    const [colors, setColors] = useState([ "#DFE6ED", "#bac4ce", "#57697A", "#7EC433"]);
 
 
     // Menu Toggle handler
@@ -33,6 +37,31 @@ const App = () => {
         setMenuIsActive((prevState) => {return !menuIsActive})
         //console.log(menuIsActive)
     }
+
+    // Update Legend with new stock ticker symbols if new stocks are selected in the sidebar
+    const updateLegend = (newTickerSymbol) => {
+        // Update Legend and add the new stock ticker symbol to it
+        let nextColor = ""
+        colors.some((color) => {
+            console.log(color)
+            console.log(legend)
+            console.log(Object.values(legend))
+
+            if (!(Object.values(legend).includes(color))){
+                console.log("Condition True")
+                nextColor = color
+                return false
+            }
+        })
+        setLegend((prevState => {return {...prevState, [newTickerSymbol]: nextColor}}));
+    };
+    // Delete Ticker symbol from legend if the tag was removed in the sidebar
+    const deleTSFromLegend = (removedTag) => {
+        console.log(removedTag);
+        let newLegend = {...legend};
+        delete newLegend[removedTag];
+        setLegend((prevState) => { return newLegend});
+    };
 
 
     // Fetching Stock Data from Alpha Vantage API
@@ -153,6 +182,11 @@ const App = () => {
             </div>
             <div className="nav-sidebar-navigation-area">
                 <Sidebar
+
+                legend = {legend}
+                colors = {colors}
+                deleteTSFromLegend = {deleTSFromLegend}
+                updateLegend = {updateLegend}
                 dateChangeHandler = {onDateChange}
                 fetchstockdata = {fetchStockData}
                 onTagRemove = {onTagRemove}
@@ -163,6 +197,9 @@ const App = () => {
         <div className="nav-top">
             <div onClick={menuToggler} className="nav-top-menu-icon-area">
                 <FontAwesomeIcon icon={faBars} className="menu-icon" />
+            </div>
+            <div className="legend">
+                {Object.keys(legend).map((key) => <span style={{color: legend[key]}}><StockOutlined className="nav-top-legend-icon"/>{key}</span>)}
             </div>
         </div>
 

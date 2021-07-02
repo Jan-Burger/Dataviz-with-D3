@@ -504,18 +504,27 @@ nav ul li a span.rotate{
         background-color: rgba(0,0,0,0.35); /* Black background with opacity */
         z-index: 1; /* Specify a stack order */
     }
+    .nav-top {
+    background-color: #DFE6ED;
+    box-shadow: 1px 1px 1px 1px #bac4ce;
+    display: grid;
+    grid-template-columns: 50px auto!important;
+    grid-template-rows: 100%;
+    grid-template-areas:
+    "menu-icon legend";
+}
 }
 
-// NAvigation top
+// Navigation top
 
 .nav-top {
     background-color: #DFE6ED;
     box-shadow: 1px 1px 1px 1px #bac4ce;
     display: grid;
-    grid-template-columns: 50px 175px 1fr;
+    grid-template-columns: 0px auto;
     grid-template-rows: 100%;
     grid-template-areas:
-    "menu-icon free-space main-nav";
+    "menu-icon legend";
 }
 
 // Nav-Top Menu Icon area
@@ -527,25 +536,26 @@ nav ul li a span.rotate{
 }
 
 // Nav-Top free space area
-.nav-top-free-space {
-    display: grid;
-    grid-area: free-space;
-    align-items: center;
-    justify-content: start;
-    min-width: 175px;
+.legend {
+    //display: grid;
+    grid-area: legend;
+    //align-items: center;
+    //justify-content: center;
+    margin: auto;
+    //min-width: 175px;
     //align-content: center;
     //justify-items: center;
     //background-color: blue; --> used for testing purpose
 }
-
-// Nav-Top Navigation area
-.nav-top-navigation-area {
-    grid-area: main-nav;
-    display: grid;
-    align-items: center;
-    align-content: center;
-    justify-content: end;
-    justify-items: end;
+.legend > span {
+    margin-right: 20px;
+    font-weight: bold;
+    color: #7EC433;
+}
+.nav-top-legend-icon {
+    margin-right: 5px;
+    font-size: 14px;
+    //color: #7EC433;
 }
 /*
 .nav-top-navigation-area-buttons {

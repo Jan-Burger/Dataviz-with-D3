@@ -15,7 +15,8 @@ class EditableTagGroup extends React.Component {
     console.log(tags);
     this.setState({ tags });
     // Update raw Data when tag is removed
-    this.props.onTagRemove(removedTag)
+    this.props.onTagRemove(removedTag);
+    this.props.deleteTSFromLegend(removedTag);
   };
 
   showInput = () => {
@@ -38,7 +39,9 @@ class EditableTagGroup extends React.Component {
       inputVisible: false,
       inputValue: '',
     });
-    this.props.fetchstockdata(inputValue)
+
+    this.props.fetchstockdata(inputValue);
+    this.props.updateLegend(inputValue);
   };
 
   saveInputRef = input => {
