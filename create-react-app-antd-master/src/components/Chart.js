@@ -83,14 +83,14 @@ const Chart = (props) => {
             const svg = d3.select(svgRef.current)
                 //.attr("width", "100%")
                 //.attr("height", "100%")
-                .style("background-color", "#F7FAFC") // for testing purpose
+                //.style("background-color", "#F7FAFC") // for testing purpose
                 //.attr("viewBox", `0 0 100% 100%`)
             //console.log(svg);
 
 
             // Creating Container inside the svg Element and transforming
             const ctr = svg.append("g")
-                .attr("transform", `translate(${margin}, ${margin})`)
+                .attr("transform", `translate(${margin}, 60)`)
 
 
             // Accessor functions (Preparing Data to be used by D3)
