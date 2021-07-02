@@ -153,9 +153,39 @@ const Chart = (props) => {
 
             // --- Adding Axis --- //
 
+            // gridlines in x axis function
+            function make_x_gridlines() {
+                return d3.axisBottom(xScale)
+                    .ticks(8)
+            }
+            // gridlines in y axis function
+            function make_y_gridlines() {
+                return d3.axisLeft(yScale)
+                    .ticks(8)
+            }
+
+            // add the X gridlines
+            ctr.append("g")
+                .attr("class", "grid-x")
+                .attr("transform", `translate(0, ${ctrheight})`)
+                .call(make_x_gridlines()
+                    .tickSize(-ctrheight)
+                    .tickFormat("")
+            )
+            // add the Y gridlines
+            ctr.append("g")
+                .attr("class", "grid-y")
+                //.attr("transform", `translate(0, ${ctrheight})`)
+                .call(make_y_gridlines()
+                    .tickSize(-ctrwidth)
+                    .tickFormat("")
+            )
+
+
             // Y Axis left
             const yAxisLeft = d3.axisLeft(yScale)
                 .tickFormat((label) => `${label}%`)
+                .ticks(Math.max(ctrheight/50, 2));
 
             ctr.append("g")
                 .call(yAxisLeft)
@@ -165,6 +195,7 @@ const Chart = (props) => {
             // Y Axis right
             const yAxisRight = d3.axisRight(yScale)
                 .tickFormat((label) => `${label}%`)
+                .ticks(Math.max(ctrheight/50, 2));
 
             ctr.append("g")
                 .call(yAxisRight)
@@ -174,11 +205,15 @@ const Chart = (props) => {
 
             // Axis Bottom
             const xAxis = d3.axisBottom(xScale)
+                .ticks(Math.max(ctrwidth/75, 2));
 
             ctr.append("g")
                 .call(xAxis)
                 .style("transform", `translateY(${ctrheight}px)`)
                 .attr("class", "x axis")
+
+
+            // Additional Properties for Axis to always show appropriate number of ticks
 
 
         //xScale.range([0, width]);
@@ -194,6 +229,8 @@ const Chart = (props) => {
         xScale.range([0, width]);
         yScale.range([height, 0]);
 
+
+
         svg.select('.x.axis')
             .style("transform", `translateY(${height}px)`)
             .call(xAxis);
@@ -204,6 +241,18 @@ const Chart = (props) => {
 
         svg.select('.y.axis-left')
             .call(yAxisLeft);
+
+        svg.select('.grid-x')
+            .attr("transform", `translate(0, ${height})`)
+            .call(make_x_gridlines()
+                .tickSize(-height)
+                .tickFormat(""));
+
+        svg.select('.grid-y')
+            //.attr("transform", `translate(0, ${width})`)
+            .call(make_y_gridlines()
+                .tickSize(-width)
+                .tickFormat(""));
 
         svg.selectAll('.line-path') //path
             .attr("d", d => lineGenerator(d.values)); // LineGenerator
