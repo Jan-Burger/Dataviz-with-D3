@@ -19,8 +19,8 @@ const App = () => {
     const [endDate, setEndDate] = useState("2020-12-31");
     const [theme, setTheme] = useState("Light");
     const [lineType, setLineType] = useState();
-    const [stockXValues, setStockXValues] = useState();
-    const [stockYValues, setStockYValues] = useState();
+    //const [stockXValues, setStockXValues] = useState();
+    //const [stockYValues, setStockYValues] = useState();
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState();
@@ -31,6 +31,9 @@ const App = () => {
     // Legend state with current stocks selected
     const [legend, setLegend] = useState({});
     const [colors, setColors] = useState([ "#DFE6ED", "#bac4ce", "#57697A", "#7EC433"]);
+    // Min Max Daterange state
+    const [minDate, setMinDate] = useState();
+    const [maxDate, setMaxDate] = useState();
 
 
     // Menu Toggle Handler
@@ -129,6 +132,12 @@ const App = () => {
 
             setPercentageData( (prevState) => { return {...prevState, ...stockObjectPercent}});
             // calculate the min max values and set them as a state
+
+            // Set minumum and maximum possible date to be selected in daterange picker
+            let dates = calcDatesForDefaultValues(rawData);
+            let minDate = dates[0];
+            let maxDate = dates[1];
+            console.log(minDate, maxDate);
 
         } catch (error) {
               setError(error.message);
@@ -288,6 +297,17 @@ const App = () => {
     console.log(rawData)
     console.log(percentageData)
     console.log("Legend data:", legend)
+
+    // Set minumum and maximum possible date to be selected in daterange picker
+    let dates = calcDatesForDefaultValues(rawData);
+    let newminDate = dates[0];
+    let newmaxDate = dates[1];
+    console.log(newminDate, newmaxDate);
+    if(!(newminDate === minDate) && !(newmaxDate === maxDate)){
+        setMinDate(newminDate);
+        setMaxDate(newmaxDate);
+    }
+
 
 
     return (
