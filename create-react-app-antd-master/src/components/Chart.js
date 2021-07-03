@@ -151,7 +151,7 @@ const Chart = (props) => {
                 .attr("class", "line-path") // later on add styles in app.less file and remove them here
 
 
-            // --- Adding Axis --- //
+            // --- Adding Axis and background grid --- //
 
             // gridlines in x axis function
             function make_x_gridlines() {

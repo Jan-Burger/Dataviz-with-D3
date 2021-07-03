@@ -34,8 +34,9 @@ const Sidebar = (props) => {
         setTheme(newTheme.currentTarget.getAttribute("data-value"));
     };
 
-    function handleChange(value) {
+    function handleSelectChange(value) {
       console.log(`selected ${value}`);
+      props.onDefaultDateChange(value);
     }
 
 
@@ -43,7 +44,7 @@ const Sidebar = (props) => {
         <>
             <div className="sidebar-dateselector-section">
                 <p className="sidebar-section-headline"><FontAwesomeIcon icon={faCalendarWeek} className="sidebar-section-headline-icon"/>Default Date Range</p>
-                <Select defaultValue="Last 30 Days" style={{ width: "100%" }} onChange={handleChange}>
+                <Select defaultValue="Last 30 Days" style={{ width: "100%" }} onChange={handleSelectChange}>
                     <Option value="Last Week">Last Week</Option>
                     <Option value="Last 30 Days">Last 30 Days</Option>
                     <Option value="Last 3 Month">Last 3 Month</Option>

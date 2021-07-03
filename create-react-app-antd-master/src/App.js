@@ -5,6 +5,7 @@ import Chart from "./components/Chart";
 import Sidebar from "./components/Sidebar";
 import calcPercentage from "./utils/calcPercentage";
 import getFullDatesArray from "./utils/getFullDatesArray";
+import calcDatesForDefaultValues from "./utils/calcDatesForDefaultValues";
 import { Layout, Menu } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faBars, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
@@ -127,6 +128,7 @@ const App = () => {
             stockObjectPercent[StockSymbol] = fetchedDataOrderedFullDatesArrayPercentage
 
             setPercentageData( (prevState) => { return {...prevState, ...stockObjectPercent}});
+            // calculate the min max values and set them as a state
 
         } catch (error) {
               setError(error.message);
@@ -143,16 +145,123 @@ const App = () => {
             let endDate = range[1].format().slice(0, 10);
             console.log(startDate, endDate)
             console.log(data)
+
             // Calc percentage of all stocks in raw data
-            let percentageData = {};
+            let newPercentageData = {};
             for (let key in rawData) {
-                 percentageData[key] = calcPercentage(startDate, endDate, rawData[key])
+                 newPercentageData[key] = calcPercentage(startDate, endDate, rawData[key])
             }
             console.log(percentageData)
+            console.log(rawData)
 
+            // Update the states percentage data, start date and end date
+            setPercentageData((prevSate) => {return newPercentageData});
+            setStartDate(startDate);
+            setEndDate(endDate);
             //let new_data = calcPercentage(startDate, endDate, data);
             //console.log(new_data)
             //setData(new_data);
+        }
+    };
+
+    const onDefaultDateChange = (selectedValue) => {
+
+        // Check if data exists --> check whether rawData length is not 0
+        if (!(Object.keys(rawData).length === 0 && rawData.constructor === Object)) {
+            let dates = calcDatesForDefaultValues(rawData);
+            let minDate = dates[0];
+            let maxDate = dates[1];
+            console.log(minDate, maxDate);
+
+            // Check which value was selected by the user --> Do correct calculations for start date and end date
+            if (selectedValue === "Last Week") {
+                // Calculate new stat date and end date based on the use input of the default date range
+                console.log(startDate, typeof endDate);
+                let newStartDate = new Date();
+                newStartDate = new Date (newStartDate.setDate(maxDate.getDate() - 7)).toISOString().slice(0, 10);
+                let newEndDate = maxDate.toISOString().slice(0, 10);
+                console.log(newStartDate, newEndDate);
+
+                // Calculate new values for percentage data
+                let newPercentageData = {};
+                for (let key in rawData) {
+                     newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
+                }
+
+                // Update states: start date, end date, percentage data
+                setPercentageData((prevSate) => {return newPercentageData});
+                setStartDate(newStartDate);
+                setEndDate(newEndDate);
+            }
+            if (selectedValue === "Last 30 Days") {
+                // Calculate new stat date and end date based on the use input of the default date range
+                let newStartDate = new Date();
+                newStartDate = new Date (newStartDate.setDate(maxDate.getDate() - 30)).toISOString().slice(0, 10);
+                let newEndDate = maxDate.toISOString().slice(0, 10);
+
+                // Calculate new values for percentage data
+                let newPercentageData = {};
+                for (let key in rawData) {
+                     newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
+                }
+
+                // Update states: start date, end date, percentage data
+                setPercentageData((prevSate) => {return newPercentageData});
+                setStartDate(newStartDate);
+                setEndDate(newEndDate);
+            }
+            if (selectedValue === "Last 3 Month") {
+                // Calculate new stat date and end date based on the use input of the default date range
+                let newStartDate = new Date();
+                newStartDate = new Date (newStartDate.setDate(maxDate.getDate() - 90)).toISOString().slice(0, 10);
+                let newEndDate = maxDate.toISOString().slice(0, 10);
+
+                // Calculate new values for percentage data
+                let newPercentageData = {};
+                for (let key in rawData) {
+                     newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
+                }
+
+                // Update states: start date, end date, percentage data
+                setPercentageData((prevSate) => {return newPercentageData});
+                setStartDate(newStartDate);
+                setEndDate(newEndDate);
+            }
+            if (selectedValue === "Last Year") {
+                // Calculate new stat date and end date based on the use input of the default date range
+                let newStartDate = new Date();
+                newStartDate = new Date (newStartDate.setDate(maxDate.getDate() - 365)).toISOString().slice(0, 10);
+                let newEndDate = maxDate.toISOString().slice(0, 10);
+
+                // Calculate new values for percentage data
+                let newPercentageData = {};
+                for (let key in rawData) {
+                     newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
+                }
+
+                // Update states: start date, end date, percentage data
+                setPercentageData((prevSate) => {return newPercentageData});
+                setStartDate(newStartDate);
+                setEndDate(newEndDate);
+            }
+            if (selectedValue === "Max") {
+                // Calculate new stat date and end date based on the use input of the default date range
+                let newStartDate = minDate.toISOString().slice(0, 10);
+                let newEndDate = maxDate.toISOString().slice(0, 10);
+                console.log(newStartDate, newEndDate);
+
+                // Calculate new values for percentage data
+                let newPercentageData = {};
+                for (let key in rawData) {
+                    newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
+                }
+                console.log(newPercentageData);
+                // Update states: start date, end date, percentage data
+                setPercentageData((prevSate) => {return newPercentageData});
+                setStartDate(newStartDate);
+                setEndDate(newEndDate);
+
+            }
         }
     };
 
@@ -191,7 +300,7 @@ const App = () => {
             </div>
             <div className="nav-sidebar-navigation-area">
                 <Sidebar
-
+                onDefaultDateChange = {onDefaultDateChange}
                 legend = {legend}
                 colors = {colors}
                 deleteTSFromLegend = {deleTSFromLegend}
