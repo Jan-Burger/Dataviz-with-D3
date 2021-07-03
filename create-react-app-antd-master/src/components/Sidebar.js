@@ -39,6 +39,19 @@ const Sidebar = (props) => {
       props.onDefaultDateChange(value);
     }
 
+    const disableDates = (currentDate) => {
+        if (!(props.maxDate == null) && !(props.minDate == null)){
+            let start = moment(props.minDate.toISOString().slice(0, 10), "YYYY-MM-DD");
+            let end = moment (props.maxDate.toISOString().slice(0, 10), "YYYY-MM-DD");
+            console.log(currentDate);
+            console.log(start, end);
+            console.log(start <= currentDate && end >= currentDate)
+            return start > currentDate || end < currentDate;
+
+        }
+
+    }
+
 
     return(
         <>
@@ -58,6 +71,7 @@ const Sidebar = (props) => {
                 defaultValue={[moment('2021/01/01', dateFormat), moment('2021/01/10', dateFormat)]}
                 format={dateFormat}
                 onChange={props.dateChangeHandler}
+                disabledDate = {disableDates}
                 />
             </div>
             <div className="sidebar-taggroup-section">

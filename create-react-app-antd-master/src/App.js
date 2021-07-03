@@ -15,7 +15,7 @@ import { LineOutlined, StockOutlined, LineChartOutlined } from '@ant-design/icon
 const App = () => {
 
     // Declaring States
-    const [startDate, setStartDate] = useState("2020-01-01");
+    const [startDate, setStartDate, startDateRef] = useState("2020-01-01");
     const [endDate, setEndDate] = useState("2020-12-31");
     const [theme, setTheme] = useState("Light");
     const [lineType, setLineType] = useState();
@@ -123,6 +123,14 @@ const App = () => {
             // update raw data
             setRawData( (prevState) => { return {...prevState, ...stockObjectRaw}});
 
+            let dates = calcDatesForDefaultValues({...rawData, ...stockObjectRaw});
+            let newminDate = dates[0];
+            let newmaxDate = dates[1];
+            console.log(newminDate, newmaxDate);
+            console.log("this is a loooooooooooooooooooooooooooooooooooooooooooong test");
+            setMaxDate(newmaxDate);
+            setMinDate(newminDate);
+
             // update percentage data
             let fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(startDate, endDate, fetchedDataOrderedFullDatesArray);
 
@@ -133,11 +141,8 @@ const App = () => {
             setPercentageData( (prevState) => { return {...prevState, ...stockObjectPercent}});
             // calculate the min max values and set them as a state
 
-            // Set minumum and maximum possible date to be selected in daterange picker
-            let dates = calcDatesForDefaultValues(rawData);
-            let minDate = dates[0];
-            let maxDate = dates[1];
-            console.log(minDate, maxDate);
+
+
 
         } catch (error) {
               setError(error.message);
@@ -146,6 +151,7 @@ const App = () => {
         setIsLoading(false);
     };
 
+    //TODO: Synchronize default date range with date range picker --> start date default date etc.
 
     // Handler Functions when changing Start or EndDate in Datepicker etc.
     const onDateChange = (range) => {
@@ -284,6 +290,15 @@ const App = () => {
         console.log(newRawData)
         setRawData(prevState => {return {...newRawData}})
 
+        // Set new min, max values for daterange
+        let dates = calcDatesForDefaultValues(newRawData);
+        let newminDate = dates[0];
+        let newmaxDate = dates[1];
+        console.log(newminDate, newmaxDate);
+        console.log("this is a loooooooooooooooooooooooooooooooooooooooooooong test");
+        setMaxDate(newmaxDate);
+        setMinDate(newminDate);
+
         // Update Percentage Data
         let newPercentageData = {...percentageData}
         delete newPercentageData[String(removedTag)];
@@ -294,19 +309,10 @@ const App = () => {
 
     //console.log(stockXValues)
     //console.log(stockYValues)
-    console.log(rawData)
-    console.log(percentageData)
-    console.log("Legend data:", legend)
+    console.log(rawData);
+    console.log(percentageData);
+    console.log("Legend data:", legend);
 
-    // Set minumum and maximum possible date to be selected in daterange picker
-    let dates = calcDatesForDefaultValues(rawData);
-    let newminDate = dates[0];
-    let newmaxDate = dates[1];
-    console.log(newminDate, newmaxDate);
-    if(!(newminDate === minDate) && !(newmaxDate === maxDate)){
-        setMinDate(newminDate);
-        setMaxDate(newmaxDate);
-    }
 
 
 
@@ -320,6 +326,10 @@ const App = () => {
             </div>
             <div className="nav-sidebar-navigation-area">
                 <Sidebar
+                minDate = {minDate}
+                maxDate = {maxDate}
+                startDate = {startDate}
+                endDate = {endDate}
                 onDefaultDateChange = {onDefaultDateChange}
                 legend = {legend}
                 colors = {colors}
