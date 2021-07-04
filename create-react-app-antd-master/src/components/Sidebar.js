@@ -5,10 +5,11 @@ import moment from 'moment';
 import EditableTagGroup from "./Tags";
 import { Button } from 'antd';
 import { Tooltip } from 'antd';
-
+import { Modal } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faBars, faCalendarWeek, faTag, faAdjust, faCalendarDay, faSun, faMoon, faInfoCircle, faInfo} from '@fortawesome/free-solid-svg-icons'
 import { Select } from 'antd';
+
 
 const { Option } = Select;
 
@@ -25,6 +26,19 @@ const customFormat = value => `custom format: ${value.format(dateFormat)}`
 
 
 const Sidebar = (props) => {
+
+    // Modal function which is triggered when
+    function tagsInfo(titleAndContent) {
+      Modal.info({
+        title: titleAndContent[0],
+        content: (
+          <div>
+            <p>{titleAndContent[1]}</p>
+          </div>
+        ),
+        onOk() {},
+      });
+    }
 
     // Set States for Sidebar Components
     const [theme, setTheme] = useState("Light");
@@ -58,7 +72,12 @@ const Sidebar = (props) => {
         <>
             <div className="sidebar-dateselector-section">
                 <p className="sidebar-section-headline"><FontAwesomeIcon icon={faCalendarWeek} className="sidebar-section-headline-icon"/>Default Date Range</p>
-                <Select defaultValue="Last 30 Days" style={{ width: "100%" }} onChange={handleSelectChange}>
+                <Select
+                    defaultValue="Last 3 Month" style={{ width: "100%" }}
+                    onChange={handleSelectChange}
+                    disabled = {props.startDate.length === 0 && props.endDate.length === 0}
+                    value = {props.defaultDateRangeDropdownValue}
+                >
                     <Option value="Last Week">Last Week</Option>
                     <Option value="Last 30 Days">Last 30 Days</Option>
                     <Option value="Last 3 Month">Last 3 Month</Option>
@@ -69,6 +88,7 @@ const Sidebar = (props) => {
             <div className="sidebar-datepicker-section">
                 <p className="sidebar-section-headline"><FontAwesomeIcon icon={faCalendarDay} className="sidebar-section-headline-icon"/>Date Range Picker</p>
                 <RangePicker
+                disabled = {props.startDate.length === 0 && props.endDate.length === 0}
                 value={(!(props.startDate.length === 0) && !(props.endDate.length === 0)) ? [moment(props.startDate, "YYYY-MM-DD"), moment(props.endDate, "YYYY-MM-DD")] : [null, null] }
                 format={dateFormat}
                 onChange={props.dateChangeHandler}
@@ -83,6 +103,7 @@ const Sidebar = (props) => {
                 </Tooltip>
                 </p>
                 <EditableTagGroup
+                tagInfo = {tagsInfo}
                 setLegend = {props.setLegend}
                 legend = {props.legend}
                 colors = {props.colors}

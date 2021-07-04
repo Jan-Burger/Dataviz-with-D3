@@ -34,6 +34,8 @@ const App = () => {
     // Min Max Daterange state
     const [minDate, setMinDate] = useState();
     const [maxDate, setMaxDate] = useState();
+    // Dropdown value for default date range
+    const [defaultDateRangeDropdownValue, setDefaultDateRangeDropdownValue] = useState("Last 3 Month");
 
 
     // Menu Toggle Handler
@@ -43,25 +45,31 @@ const App = () => {
     }
 
     // Update Legend with new stock ticker symbols if new stocks are selected in the sidebar
-    const updateLegend = (newTickerSymbol) => {
-        // Set nextColor to an empty string
-        let nextColor = ""
+    const updateLegend = (newTickerSymbol, tags) => {
+        // Check if length of new Ticker symbol is at least 1
+        if (newTickerSymbol.length > 0 && !tags.includes(newTickerSymbol)) {
 
-        // Loop over all predefined colors in color-state
-        colors.some((color) => {
-            //console.log(color)
-            //console.log(legend)
-            //console.log(Object.values(legend))
+            // Set nextColor to an empty string
+            let nextColor = ""
 
-            // If a color from the colors-array does not exist in the legend object --> nextColor will be set to the value of the current color in the array
-            if (!(Object.values(legend).includes(color))){
-                console.log("Condition True")
-                nextColor = color
-                return false
-            }
-        })
-        // Update the sate of the legend key = new ticker symbol, value = value of nextColor
-        setLegend((prevState => {return {...prevState, [newTickerSymbol]: nextColor}}));
+            // Loop over all predefined colors in color-state
+            colors.some((color) => {
+                //console.log(color)
+                //console.log(legend)
+                //console.log(Object.values(legend))
+
+                // If a color from the colors-array does not exist in the legend object --> nextColor will be set to the value of the current color in the array
+                if (!(Object.values(legend).includes(color))) {
+                    console.log("Condition True")
+                    nextColor = color
+                    return false
+                }
+            })
+            // Update the sate of the legend key = new ticker symbol, value = value of nextColor
+            setLegend((prevState => {
+                return {...prevState, [newTickerSymbol]: nextColor}
+            }));
+        }
     };
 
     // Delete Ticker symbol from legend if the tag was removed in the sidebar
@@ -190,6 +198,9 @@ const App = () => {
                 setEndDate(endDate);
             }
 
+            // Update Default Date Range to show Custom Range has been selected
+            setDefaultDateRangeDropdownValue("Custom Range Selected");
+
             //let new_data = calcPercentage(startDate, endDate, data);
             //console.log(new_data)
             //setData(new_data);
@@ -220,10 +231,11 @@ const App = () => {
                      newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
                 }
 
-                // Update states: start date, end date, percentage data
+                // Update states: start date, end date, percentage data, dropdown value
                 setPercentageData((prevSate) => {return newPercentageData});
                 setStartDate(newStartDate);
                 setEndDate(newEndDate);
+                setDefaultDateRangeDropdownValue("Last Week");
             }
             if (selectedValue === "Last 30 Days") {
                 // Calculate new stat date and end date based on the use input of the default date range
@@ -237,10 +249,11 @@ const App = () => {
                      newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
                 }
 
-                // Update states: start date, end date, percentage data
+                // Update states: start date, end date, percentage data, dropdown value
                 setPercentageData((prevSate) => {return newPercentageData});
                 setStartDate(newStartDate);
                 setEndDate(newEndDate);
+                setDefaultDateRangeDropdownValue("Last 30 Days");
             }
             if (selectedValue === "Last 3 Month") {
                 // Calculate new stat date and end date based on the use input of the default date range
@@ -254,10 +267,11 @@ const App = () => {
                      newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
                 }
 
-                // Update states: start date, end date, percentage data
+                // Update states: start date, end date, percentage data, dropdown value
                 setPercentageData((prevSate) => {return newPercentageData});
                 setStartDate(newStartDate);
                 setEndDate(newEndDate);
+                setDefaultDateRangeDropdownValue("Last 3 Month");
             }
             if (selectedValue === "Last Year") {
                 // Calculate new stat date and end date based on the use input of the default date range
@@ -271,10 +285,11 @@ const App = () => {
                      newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
                 }
 
-                // Update states: start date, end date, percentage data
+                // Update states: start date, end date, percentage data, dropdown value
                 setPercentageData((prevSate) => {return newPercentageData});
                 setStartDate(newStartDate);
                 setEndDate(newEndDate);
+                setDefaultDateRangeDropdownValue("Last Year");
             }
             if (selectedValue === "Max") {
                 // Calculate new stat date and end date based on the use input of the default date range
@@ -288,10 +303,11 @@ const App = () => {
                     newPercentageData[key] = calcPercentage(newStartDate, newEndDate, rawData[key])
                 }
                 console.log(newPercentageData);
-                // Update states: start date, end date, percentage data
+                // Update states: start date, end date, percentage data, dropdown value
                 setPercentageData((prevSate) => {return newPercentageData});
                 setStartDate(newStartDate);
                 setEndDate(newEndDate);
+                setDefaultDateRangeDropdownValue("Max");
 
             }
         }
@@ -319,6 +335,9 @@ const App = () => {
         }else {
             setMaxDate();
             setMinDate();
+            setStartDate("");
+            setEndDate("");
+            setDefaultDateRangeDropdownValue("Last 3 Month");
         }
 
 
@@ -349,6 +368,7 @@ const App = () => {
             </div>
             <div className="nav-sidebar-navigation-area">
                 <Sidebar
+                defaultDateRangeDropdownValue = {defaultDateRangeDropdownValue}
                 minDate = {minDate}
                 maxDate = {maxDate}
                 startDate = {startDate}

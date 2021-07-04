@@ -28,20 +28,28 @@ class EditableTagGroup extends React.Component {
   };
 
   handleInputConfirm = () => {
-    const { inputValue } = this.state;
-    let { tags } = this.state;
-    if (inputValue && tags.indexOf(inputValue) === -1) {
-      tags = [...tags, inputValue];
-    }
-    console.log(tags);
-    this.setState({
-      tags,
-      inputVisible: false,
-      inputValue: '',
-    });
+      // TODO: Double appearing modal form ant design & correct verification of legend and too many stocks selected
+    const {inputValue} = this.state;
+    let {tags} = this.state;
 
-    this.props.fetchstockdata(inputValue);
-    this.props.updateLegend(inputValue);
+
+
+    if (inputValue && tags.indexOf(inputValue) === -1) {
+
+
+        tags = [...tags, inputValue];
+    }
+      if ((tags.length > 3)) {
+        this.props.tagInfo(['Too many Stocks selected', "You are trying to select too many stocks than allowed in the free version. If you want to select an infinite amount of stocks sign up for the premium version."])
+      }else {
+          console.log(tags);
+          this.setState({
+          tags,
+          inputVisible: false,
+          inputValue: '',
+        });
+          this.props.fetchstockdata(inputValue);
+    }
   };
 
   saveInputRef = input => {
