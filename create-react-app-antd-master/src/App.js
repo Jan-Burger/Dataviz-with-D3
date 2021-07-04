@@ -15,8 +15,8 @@ import { LineOutlined, StockOutlined, LineChartOutlined } from '@ant-design/icon
 const App = () => {
 
     // Declaring States
-    const [startDate, setStartDate, startDateRef] = useState("2020-01-01");
-    const [endDate, setEndDate] = useState("2020-12-31");
+    const [startDate, setStartDate, startDateRef] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [theme, setTheme] = useState("Light");
     const [lineType, setLineType] = useState();
     //const [stockXValues, setStockXValues] = useState();
@@ -117,7 +117,7 @@ const App = () => {
             setData(fetchedDataOrderedFullDatesArray);
 
             // Create object and map stocksymbol to array
-            let stockObjectRaw = {}
+            let stockObjectRaw = {};
             stockObjectRaw[StockSymbol] = fetchedDataOrderedFullDatesArray;
 
             // update raw data
@@ -133,6 +133,20 @@ const App = () => {
 
             // update percentage data
             let fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(startDate, endDate, fetchedDataOrderedFullDatesArray);
+
+            // Check if it is the first stock being selected and set start and end date accordingly
+            if (Object.keys({...rawData, ...stockObjectRaw}).length === 1){
+                let newStartDate = new Date();
+                newStartDate = new Date (newStartDate.setDate(newmaxDate.getDate() - 90)).toISOString().slice(0, 10);
+                let newEndDate = newmaxDate.toISOString().slice(0, 10);
+                setStartDate(newStartDate);
+                setEndDate(newEndDate);
+
+                // update percentage data
+                fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(newStartDate, newEndDate, fetchedDataOrderedFullDatesArray);
+            }
+
+
 
             // Create object and map stocksymbol to array
             let stockObjectPercent = {}
@@ -171,8 +185,11 @@ const App = () => {
 
             // Update the states percentage data, start date and end date
             setPercentageData((prevSate) => {return newPercentageData});
-            setStartDate(startDate);
-            setEndDate(endDate);
+            if (!(Object.keys(rawData).length === 0 && rawData.constructor === Object)){
+                setStartDate(startDate);
+                setEndDate(endDate);
+            }
+
             //let new_data = calcPercentage(startDate, endDate, data);
             //console.log(new_data)
             //setData(new_data);
@@ -296,8 +313,14 @@ const App = () => {
         let newmaxDate = dates[1];
         console.log(newminDate, newmaxDate);
         console.log("this is a loooooooooooooooooooooooooooooooooooooooooooong test");
-        setMaxDate(newmaxDate);
-        setMinDate(newminDate);
+        if (!(Object.keys(newRawData).length === 0 && newRawData.constructor === Object)){
+            setMaxDate(newmaxDate);
+            setMinDate(newminDate);
+        }else {
+            setMaxDate();
+            setMinDate();
+        }
+
 
         // Update Percentage Data
         let newPercentageData = {...percentageData}

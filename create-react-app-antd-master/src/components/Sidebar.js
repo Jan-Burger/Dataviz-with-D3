@@ -40,6 +40,7 @@ const Sidebar = (props) => {
     }
 
     const disableDates = (currentDate) => {
+        console.log(props.maxDate, props.minDate);
         if (!(props.maxDate == null) && !(props.minDate == null)){
             let start = moment(props.minDate.toISOString().slice(0, 10), "YYYY-MM-DD");
             let end = moment (props.maxDate.toISOString().slice(0, 10), "YYYY-MM-DD");
@@ -68,7 +69,7 @@ const Sidebar = (props) => {
             <div className="sidebar-datepicker-section">
                 <p className="sidebar-section-headline"><FontAwesomeIcon icon={faCalendarDay} className="sidebar-section-headline-icon"/>Date Range Picker</p>
                 <RangePicker
-                defaultValue={[moment('2021/01/01', dateFormat), moment('2021/01/10', dateFormat)]}
+                value={(!(props.startDate.length === 0) && !(props.endDate.length === 0)) ? [moment(props.startDate, "YYYY-MM-DD"), moment(props.endDate, "YYYY-MM-DD")] : [null, null] }
                 format={dateFormat}
                 onChange={props.dateChangeHandler}
                 disabledDate = {disableDates}
