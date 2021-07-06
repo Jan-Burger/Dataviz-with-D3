@@ -38,6 +38,12 @@ const App = () => {
     const [maxDate, setMaxDate] = useState();
     // Dropdown value for default date range
     const [defaultDateRangeDropdownValue, setDefaultDateRangeDropdownValue] = useState("Last 3 Month");
+    // Sate of Hover tooltip
+    const [hoverTootipIsActive, setHoverTooltipIsActive] = useState(false);
+
+    const handleTooltipSwitch = (checked) => {
+        setHoverTooltipIsActive(checked);
+    };
 
     // Menu Toggle Handler
     const menuToggler = () => {
@@ -414,6 +420,7 @@ const App = () => {
             </div>
             <div className="nav-sidebar-navigation-area">
                 <Sidebar
+                handleTooltipSwitch = {handleTooltipSwitch}
                 defaultDateRangeDropdownValue = {defaultDateRangeDropdownValue}
                 minDate = {minDate}
                 maxDate = {maxDate}
@@ -442,6 +449,7 @@ const App = () => {
             <div className="content">
                 {isLoading ? <Spin tip="Loading..." size="large" className="spinner-content">
                     <Chart
+                    hoverTootipIsActive = {hoverTootipIsActive}
                     legend = {legend}
                     startdate = {startDate}
                     enddate = {endDate}
@@ -451,6 +459,7 @@ const App = () => {
                     />
                 </Spin> :
                     <Chart
+                    hoverTootipIsActive = {hoverTootipIsActive}
                     legend = {legend}
                     startdate = {startDate}
                     enddate = {endDate}

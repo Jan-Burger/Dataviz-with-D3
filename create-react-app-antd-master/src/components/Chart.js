@@ -30,8 +30,10 @@ const Chart = (props) => {
     //const [chartHeight, setChartHeight] = useState(parseInt(d3.select(svgRef.current).style("height")));
 
     // Chart Dimensions (width and height)
-    const [chartWidth, setChartWidth] = useState(0);
-    const [chartHeight, setChartHeight] = useState(0);
+    //const [chartWidth, setChartWidth] = useState(0);
+    //const [chartHeight, setChartHeight] = useState(0);
+
+
 
     // margin of y left axis needs to be adjusted
 
@@ -61,6 +63,7 @@ const Chart = (props) => {
     //console.log(percentageData)
 
     // Declaring svg Ref
+    const tooltipRef = useRef();
     const wrapperRef = useRef();
     const svgRef = useRef();
     const dimensions = useResizeObserver(wrapperRef);
@@ -243,12 +246,98 @@ const Chart = (props) => {
                 .style("transform", `translateY(${ctrheight}px)`)
                 .attr("class", "x axis")
 
+
+            /* --- Hover action and tooltip --- */
+            if (props.hoverTootipIsActive) {
+
+
+                // selecting the tooltip div and appending line to the svg container
+                const tooltip = d3.select(tooltipRef.current);
+                const tooltipLine = ctr.append("line");
+
+
+                // Function onmouse move which will draw the tooltip if the mouse is moved over the chart
+                const drawTooltip = (event) => {
+                    console.log("Mouse hovers over chart...");
+                    console.log(xScale.invert(d3.pointer(event)[0]));
+                    let date = xScale.invert(d3.pointer(event)[0]);
+                    console.log(date.toISOString().slice(0,10));
+                    //let resultDate = new Date();
+                    let resultDate = new Date(date.setDate(date.getDate() + 1));
+                    console.log(resultDate);
+                    let resultDateForScale = new Date(date.setDate(date.getDate() - 1));
+
+
+
+
+                    //const year = Math.floor((xScale.invert(d3.pointer(tipBox.node())[0]) + 5) / 10) * 10;
+                    //console.log(d3.pointer(this));
+
+                    //states.sort((a, b) => {
+                    //return b.history.find(h => h.year == year).population - a.history.find(h => h.year == year).population;
+                    //})
+
+                    // `${d.key}: some value in %`
+                    tooltipLine.attr('stroke', '#DFE6ED')
+                        .attr('x1', xScale(resultDateForScale))
+                        .attr('x2', xScale(resultDateForScale))
+                        .attr('y1', 0)
+                        .attr('y2', ctrheight);
+
+                    tooltip.html(`Date: ${resultDate.toISOString().slice(0,10)}`)
+                        .style('display', 'block')
+                        .style('left', 150)
+                        .style('top', 150)
+                        .selectAll()
+                        .data(nestedData).enter()
+                        .append('div')
+                        .style('color', d => color(d.key))
+                        .html(d => {
+                            console.log(d.key);
+                            console.log(d.values);
+                            console.log(d.values.find(value => value.date == resultDate.toISOString().slice(0,10)));
+                            console.log(resultDate.toISOString().slice(0,10));
+                            if (d.values.find(value => value.date == resultDate.toISOString().slice(0,10))){
+                                return `${d.key}: ${Math.round((d.values.find(value => value.date == resultDate.toISOString().slice(0,10)).close + Number.EPSILON) * 100) / 100}%`
+                            }else {
+                                return "No Data"
+                            }
+
+                        });
+                    // + ': ' + d.history.find(h => h.year == year).population
+
+                    ctr.selectAll(".line-path")
+                        .append('circle')
+                        .attr('r', 4.5);
+
+
+                }
+
+                // Function onmouseout which will destroy the tooltip if the mouse leaves the svg container
+                const removeTooltip = () => {
+                    console.log("Mouse just left the chart...")
+                    if (tooltip) tooltip.style('display', 'none');
+                    if (tooltipLine) tooltipLine.attr('stroke', 'none');
+                }
+
+
+                // Append the tooltip to the svg container
+                const tipBox = ctr.append('rect')
+                    .attr('width', ctrwidth)
+                    .attr('height', ctrheight)
+                    .attr('opacity', 0)
+                    .on('mousemove', (event) => {drawTooltip(event)})
+                    .on('mouseout', removeTooltip);
+            }
+
+
+
         }
 
         return () => {d3.select("g").remove()}
 
 
-    }, [data, rawData, percentageData, dimensions])
+    }, [data, rawData, percentageData, dimensions, props.hoverTootipIsActive])
 
 
 
@@ -256,8 +345,19 @@ const Chart = (props) => {
     return (
         <div ref={wrapperRef}>
             <svg ref={svgRef} className="svgchart"></svg>
+            {Object.keys(rawData).length > 0 && props.hoverTootipIsActive ? <div className="tooltip" ref={tooltipRef} style={{
+                display: "none",
+                position: "absolute",
+                backgroundColor: "#DFE6ED",
+                padding: "7.5px",
+                color: "#57697A",
+                top: "145px",
+                marginLeft: "75px"
+            }}></div>: ""}
+
         </div>
     );
 };
 
 export default Chart;
+// TODO - Render background grid first  --> before lines are rended

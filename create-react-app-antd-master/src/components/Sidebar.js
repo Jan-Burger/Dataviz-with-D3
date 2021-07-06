@@ -5,9 +5,9 @@ import moment from 'moment';
 import EditableTagGroup from "./Tags";
 import { Button } from 'antd';
 import { Tooltip } from 'antd';
-import { Modal } from 'antd';
+import { Modal, Switch  } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faBars, faCalendarWeek, faTag, faAdjust, faCalendarDay, faSun, faMoon, faInfoCircle, faInfo} from '@fortawesome/free-solid-svg-icons'
+import { faCoffee, faBars, faCalendarWeek, faTag, faAdjust, faCalendarDay, faSun, faMoon, faInfoCircle, faToggleOn, faSearchPlus, faMousePointer} from '@fortawesome/free-solid-svg-icons'
 import { Select } from 'antd';
 
 
@@ -66,6 +66,10 @@ const Sidebar = (props) => {
         }
 
     }
+    const handleTooltipSwitch = (checked) => {
+        console.log(`switch to ${checked}`);
+        props.handleTooltipSwitch(checked);
+    }
 
 
     return(
@@ -121,6 +125,16 @@ const Sidebar = (props) => {
                         <Button onClick={themeToggler} data-value="Dark" type = {(theme === "Dark" ? "primary" : "")}><FontAwesomeIcon icon={faMoon} className="sidebar-section-theme-icon"/>Dark</Button>
                     </div>
                 </div>
+            </div>
+            <div className="sidebar-theme-section">
+                <p className="sidebar-section-headline" style={{display: "inline"}}><FontAwesomeIcon icon={faMousePointer} className="sidebar-section-headline-icon"/>Hover Tooltip</p>
+                <Switch onChange={handleTooltipSwitch} style={{marginLeft: "15px", display: "inline"}}/>
+
+            </div>
+            <div className="sidebar-theme-section">
+                <p className="sidebar-section-headline" style={{display: "inline"}}><FontAwesomeIcon icon={faSearchPlus} className="sidebar-section-headline-icon"/>Zoom & Scroll</p>
+                <Switch style={{marginLeft: "15px", display: "inline"}}/>
+
             </div>
         </>
     );
