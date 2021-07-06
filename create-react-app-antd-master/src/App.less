@@ -17,7 +17,7 @@ body {
 
 .svgchart {
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 138px)!important;;
   //border: 1px solid brown;
 }
 
@@ -44,22 +44,59 @@ body {
 
 .content {
     grid-area: content;
+    //display: grid;
+    //align-content: center;
+    //justify-items: center;
+    //align-items: center;
+    //justify-content: center;
     //background-color: #F7FAFC;
     //padding: 30px 20px 30px 20px;
     min-height: calc(100vh - 130px);
+    //margin: auto;
+
 }
+.welcome-container{
+    text-align: center;
+    //margin-top: 350px;
+}
+
+.ant-spin-nested-loading {
+    min-height: calc(100vh - 133px)!important;
+}
+.ant-spin-lg{
+    min-height: calc(100vh - 133px)!important;
+}
+.ant-spin-container {
+    min-height: calc(100vh - 133px)!important;
+}
+
+.welcome-div-absolute {
+    position:absolute;
+    left: calc((100vw + 250px) * 0.5);
+    top:50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.welcome-headline {
+    font-size: 20px;
+    font-weight: bold;
+    color: #57697A;
+}
+.welcome-description {
+    font-size: 15px;
+    color: #57697A;
+}
+
 .footer {
     grid-area: footer;
     width: 100%;
     background-color: #DFE6ED;
     box-shadow: 1px 1px 1px 1px #bac4ce!important;
-    position: relative;
     font-size: 15px;
     display: grid;
-    grid-template-rows: auto;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas:
-        "footer-left footer-middle footer-right";
+    justify-content: center;
+    align-items: center;
+
 }
 /*
 .footer-left {
@@ -177,6 +214,13 @@ body {
         min-height: calc(100vh - 100px);
     }
 
+    .ant-spin-nested-loading {
+        min-height: calc(100vh - 100px)!important;
+    }
+    .ant-spin-lg{
+        min-height: calc(100vh - 100px)!important;
+    }
+
     .footer {
         grid-area: footer-mobile;
         //width: 100%;
@@ -194,6 +238,14 @@ body {
             "footer-right";
         //display: none;
     }
+
+    .welcome-div-absolute {
+    position:absolute;
+    left: 50%;
+    top:50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
 
     /*
     .footer-left {
@@ -304,6 +356,7 @@ body {
     color: rgba(255, 255, 255, 0.75);
     //font-weight: bold;
     font-size: 15px;
+    margin-bottom: 12.5px;
 }
 .sidebar-section-headline-icon{
     margin-right: 7.5px;
@@ -541,6 +594,7 @@ nav ul li a span.rotate{
 
 // Nav-Top free space area
 .legend {
+    font-size: 15px;
     //display: grid;
     grid-area: legend;
     //align-items: center;

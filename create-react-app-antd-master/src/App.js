@@ -6,10 +6,12 @@ import Sidebar from "./components/Sidebar";
 import calcPercentage from "./utils/calcPercentage";
 import getFullDatesArray from "./utils/getFullDatesArray";
 import calcDatesForDefaultValues from "./utils/calcDatesForDefaultValues";
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Modal } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faBars, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
+import { faCoffee, faBars, faEllipsisH, faCopyright } from '@fortawesome/free-solid-svg-icons'
 import { LineOutlined, StockOutlined, LineChartOutlined } from '@ant-design/icons';
+import { Spin, Alert } from 'antd';
+import logo from './utils/images/logo_without_line.png';
 
 // https://stackoverflow.com/questions/60091618/react-daterangepicker-mobile-friendly
 const App = () => {
@@ -36,7 +38,6 @@ const App = () => {
     const [maxDate, setMaxDate] = useState();
     // Dropdown value for default date range
     const [defaultDateRangeDropdownValue, setDefaultDateRangeDropdownValue] = useState("Last 3 Month");
-
 
     // Menu Toggle Handler
     const menuToggler = () => {
@@ -82,6 +83,16 @@ const App = () => {
         // Update the legend values
         setLegend((prevState) => { return newLegend});
     };
+    const errorModal = (StockSymbol) => {
+        Modal.error({
+            title: 'Invalid API call',
+            content: `${StockSymbol} is not a valid Ticker Symbol for a stock. Either the Stock is not listed in Alpha Vantage or the ticker symbol is wrong. Please delete the ticker symbol and try again.`,
+            onOk(){
+                deleTSFromLegend(StockSymbol)
+
+            }
+        });
+    }
 
 
     // Fetching Stock Data from Alpha Vantage API
@@ -91,9 +102,8 @@ const App = () => {
         setIsLoading(true);
         setError(null);
 
-        // Declaring API Key & Stock Symbol
+        // Declaring API Key
         const API_KEY = 'HGJWFG4N8AQ66ICD';
-        //let StockSymbol = 'TSLA';
 
         try {
             const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${StockSymbol}&outputsize=full&apikey=${API_KEY}`);
@@ -103,67 +113,95 @@ const App = () => {
             // If no Error --> Data gets logged!
             const data = await response.json();
             console.log(data)
+            if ('Error Message' in data){
+                errorModal(StockSymbol);
+            }else {
 
-            let fetchedData = []
+                let fetchedData = []
 
-            // loop over json data and extract relevant values (date and closeprice)
-            for (let key in data['Time Series (Daily)']) {
+                // loop over json data and extract relevant values (date and closeprice)
+                for (let key in data['Time Series (Daily)']) {
 
-                let object = {
-                    date: key,
-                    close: data['Time Series (Daily)'][key]['4. close'],
-                    stockSymbol: StockSymbol
+                    let object = {
+                        date: key,
+                        close: data['Time Series (Daily)'][key]['4. close'],
+                        stockSymbol: StockSymbol
+                    }
+                    fetchedData.push(object)
+
                 }
-                fetchedData.push(object)
+                // Reverse Array to get correct order of dates
+                let fetchedDataOrdered = [...fetchedData].reverse();
+                console.log(fetchedDataOrdered);
+                // Replace missing date and price values for days like sat and sun
+                let fetchedDataOrderedFullDatesArray = getFullDatesArray([...fetchedDataOrdered]);
+                setData(fetchedDataOrderedFullDatesArray);
 
-            }
-            // Reverse Array to get correct order of dates
-            let fetchedDataOrdered = [...fetchedData].reverse();
-            console.log(fetchedDataOrdered);
-            // Replace missing date and price values for days like sat and sun
-            let fetchedDataOrderedFullDatesArray = getFullDatesArray([...fetchedDataOrdered]);
-            setData(fetchedDataOrderedFullDatesArray);
+                // Create object and map stocksymbol to array
+                let stockObjectRaw = {};
+                stockObjectRaw[StockSymbol] = fetchedDataOrderedFullDatesArray;
 
-            // Create object and map stocksymbol to array
-            let stockObjectRaw = {};
-            stockObjectRaw[StockSymbol] = fetchedDataOrderedFullDatesArray;
+                // update raw data
+                setRawData((prevState) => {
+                    return {...prevState, ...stockObjectRaw}
+                });
 
-            // update raw data
-            setRawData( (prevState) => { return {...prevState, ...stockObjectRaw}});
-
-            let dates = calcDatesForDefaultValues({...rawData, ...stockObjectRaw});
-            let newminDate = dates[0];
-            let newmaxDate = dates[1];
-            console.log(newminDate, newmaxDate);
-            console.log("this is a loooooooooooooooooooooooooooooooooooooooooooong test");
-            setMaxDate(newmaxDate);
-            setMinDate(newminDate);
-
-            // update percentage data
-            let fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(startDate, endDate, fetchedDataOrderedFullDatesArray);
-
-            // Check if it is the first stock being selected and set start and end date accordingly
-            if (Object.keys({...rawData, ...stockObjectRaw}).length === 1){
-                let newStartDate = new Date();
-                newStartDate = new Date (newStartDate.setDate(newmaxDate.getDate() - 90)).toISOString().slice(0, 10);
-                let newEndDate = newmaxDate.toISOString().slice(0, 10);
-                setStartDate(newStartDate);
-                setEndDate(newEndDate);
+                let dates = calcDatesForDefaultValues({...rawData, ...stockObjectRaw});
+                let newminDate = dates[0];
+                let newmaxDate = dates[1];
+                console.log(newminDate, newmaxDate);
+                console.log("this is a loooooooooooooooooooooooooooooooooooooooooooong test");
+                setMaxDate(newmaxDate);
+                setMinDate(newminDate);
 
                 // update percentage data
-                fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(newStartDate, newEndDate, fetchedDataOrderedFullDatesArray);
+                let fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(startDate, endDate, fetchedDataOrderedFullDatesArray);
+                console.log(fetchedDataOrderedFullDatesArrayPercentage);
+
+                let startDateTemp = new Date(startDate);
+                console.log(startDateTemp, newminDate, maxDate);
+                if (startDateTemp < newminDate){
+                    console.log("startdate less than min date --> use mindate as start")
+                    fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(newminDate.toISOString().slice(0, 10), endDate, fetchedDataOrderedFullDatesArray);
+                    console.log(fetchedDataOrderedFullDatesArrayPercentage);
+                    setStartDate(newminDate);
+                    let newPercentageData = {};
+                    for (let key in rawData) {
+                        newPercentageData[key] = calcPercentage(newminDate.toISOString().slice(0, 10), endDate, rawData[key])
+                    }
+                    let stockObjectPercent = {}
+                    stockObjectPercent[StockSymbol] = fetchedDataOrderedFullDatesArrayPercentage
+
+                    setPercentageData((prevState) => {
+                        return {...newPercentageData, ...stockObjectPercent}
+                    });
+                }else {
+
+
+                    // Check if it is the first stock being selected and set start and end date accordingly
+                    if (Object.keys({...rawData, ...stockObjectRaw}).length === 1) {
+                        console.log("raw data length == 1...")
+                        let newStartDate = new Date();
+                        newStartDate = new Date(newStartDate.setDate(newmaxDate.getDate() - 90)).toISOString().slice(0, 10);
+                        let newEndDate = newmaxDate.toISOString().slice(0, 10);
+                        setStartDate(newStartDate);
+                        setEndDate(newEndDate);
+
+                        // update percentage data
+                        fetchedDataOrderedFullDatesArrayPercentage = calcPercentage(newStartDate, newEndDate, fetchedDataOrderedFullDatesArray);
+                    }
+
+
+                    // Create object and map stocksymbol to array
+                    let stockObjectPercent = {}
+                    stockObjectPercent[StockSymbol] = fetchedDataOrderedFullDatesArrayPercentage
+
+                    setPercentageData((prevState) => {
+                        return {...prevState, ...stockObjectPercent}
+                    });
+                }
+                // calculate the min max values and set them as a state
             }
-
-
-
-            // Create object and map stocksymbol to array
-            let stockObjectPercent = {}
-            stockObjectPercent[StockSymbol] = fetchedDataOrderedFullDatesArrayPercentage
-
-            setPercentageData( (prevState) => { return {...prevState, ...stockObjectPercent}});
-            // calculate the min max values and set them as a state
-
-
 
 
         } catch (error) {
@@ -362,9 +400,17 @@ const App = () => {
     <div className="container">
         <div className={`overlay ${menuIsActive ? "overlay-active" : ""}`}onClick={menuToggler} ></div>
 
+        {Object.keys(percentageData).length === 0 && !isLoading ?
+             <div className="welcome-div-absolute" >
+            <p className="welcome-headline">Welcome to Stock Management!</p>
+            <p className="welcome-description">Start by selecting a stock tag in the sidebar. Happy analyzing!</p>
+            </div>: ""}
+
+
+
         <div className={`nav-sidebar ${menuIsActive ? "nav-active" : "nav-active-remove"}`}>
             <div className="nav-sidebar-logo-area">
-
+                <img src={logo}/>
             </div>
             <div className="nav-sidebar-navigation-area">
                 <Sidebar
@@ -393,20 +439,28 @@ const App = () => {
                 {Object.keys(legend).map((key) => <span style={{color: legend[key]}}><StockOutlined className="nav-top-legend-icon"/>{key}</span>)}
             </div>
         </div>
-
-        <div className="content">
-            <Chart
-            legend = {legend}
-            startdate = {startDate}
-            enddate = {endDate}
-            data = {data}
-            rawData = {rawData}
-            percentageData = {percentageData}
-            />
-        </div>
-
+            <div className="content">
+                {isLoading ? <Spin tip="Loading..." size="large" className="spinner-content">
+                    <Chart
+                    legend = {legend}
+                    startdate = {startDate}
+                    enddate = {endDate}
+                    data = {data}
+                    rawData = {rawData}
+                    percentageData = {percentageData}
+                    />
+                </Spin> :
+                    <Chart
+                    legend = {legend}
+                    startdate = {startDate}
+                    enddate = {endDate}
+                    data = {data}
+                    rawData = {rawData}
+                    percentageData = {percentageData}
+                    />}
+            </div>
         <div className="footer">
-
+            <div style={{color: "#57697A"}}><FontAwesomeIcon icon={faCopyright} style={{color: "#57697A"}}/> 2021 - <a href="https://de.linkedin.com/in/jan-burger-262774174">Jan Burger</a></div>
         </div>
     </div>
     );

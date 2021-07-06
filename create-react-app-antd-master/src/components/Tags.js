@@ -1,5 +1,5 @@
 import React from "react";
-import { Tag, Input } from 'antd';
+import {Tag, Input, Modal} from 'antd';
 import { TweenOneGroup } from 'rc-tween-one';
 import { PlusOutlined } from '@ant-design/icons';
 
@@ -9,6 +9,18 @@ class EditableTagGroup extends React.Component {
     inputVisible: false,
     inputValue: '',
   };
+  // Modal function which is triggered when
+   tagsInfo = (titleAndContent) => {
+      Modal.info({
+        title: titleAndContent[0],
+        content: (
+          <div>
+            <p>{titleAndContent[1]}</p>
+          </div>
+        ),
+        onOk() {},
+      });
+    }
 
   handleClose = removedTag => {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
@@ -27,6 +39,10 @@ class EditableTagGroup extends React.Component {
     this.setState({ inputValue: e.target.value });
   };
 
+  handleRemoveTagIfInvalidTS = stockSymbol => {
+      let tags
+  }
+
   handleInputConfirm = () => {
       // TODO: Double appearing modal form ant design & correct verification of legend and too many stocks selected
     const {inputValue} = this.state;
@@ -35,21 +51,41 @@ class EditableTagGroup extends React.Component {
 
 
     if (inputValue && tags.indexOf(inputValue) === -1) {
-
+        console.log("Value ok...")
+        if (tags.length < 3){
+            this.props.updateLegend(inputValue, tags);
+        }
 
         tags = [...tags, inputValue];
-    }
+
       if ((tags.length > 3)) {
-        this.props.tagInfo(['Too many Stocks selected', "You are trying to select too many stocks than allowed in the free version. If you want to select an infinite amount of stocks sign up for the premium version."])
+          console.log("Pop up will be shown in next line...")
+        this.tagsInfo(['Too many Stocks selected', "You are trying to select too many stocks than allowed in the free version. If you want to select an infinite amount of stocks sign up for the premium version."])
+      }else {
+          console.log(inputValue);
+          if (inputValue.length > 0){
+            this.props.fetchstockdata(inputValue);
+          }
+
+        }
+        if(tags.length < 4){
+          console.log(tags);
+          this.setState({
+          tags,
+          inputVisible: false,
+          inputValue: '',
+          });
+        }
       }else {
           console.log(tags);
           this.setState({
           tags,
           inputVisible: false,
           inputValue: '',
-        });
-          this.props.fetchstockdata(inputValue);
+          });
     }
+
+
   };
 
   saveInputRef = input => {

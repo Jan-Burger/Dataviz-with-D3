@@ -1,13 +1,37 @@
 import React, {useEffect, useRef, useState} from "react";
 import * as d3 from "d3";
 import {nest} from 'd3-collection';
-import calcPercentage from "../utils/calcPercentage";
-import getFullDatesArray from "../utils/getFullDatesArray";
+import ResizeObserver from "resize-observer-polyfill";
+
+
+
+// Custom react hook which uses the resizeobserver API to observe any size changes in the parent div of the svg element (svg itself is not supported)
+const useResizeObserver = (ref) => {
+    const [dimensions, setDimensions] = useState(null);
+    useEffect(() => {
+        const observedTarget = ref.current;
+        const resizeObserver = new ResizeObserver((entries) => {
+            entries.forEach(entry => {
+                setDimensions(entry.contentRect);
+            })
+        })
+        resizeObserver.observe(observedTarget);
+        return () => {resizeObserver.unobserve(observedTarget);}
+    }, [ref]);
+
+    return dimensions;
+}
+
+
 
 const Chart = (props) => {
 
     //const [chartWidth, setChartWidth] = useState(parseInt(d3.select(svgRef.current).style("width")));
     //const [chartHeight, setChartHeight] = useState(parseInt(d3.select(svgRef.current).style("height")));
+
+    // Chart Dimensions (width and height)
+    const [chartWidth, setChartWidth] = useState(0);
+    const [chartHeight, setChartHeight] = useState(0);
 
     // margin of y left axis needs to be adjusted
 
@@ -37,11 +61,16 @@ const Chart = (props) => {
     //console.log(percentageData)
 
     // Declaring svg Ref
+    const wrapperRef = useRef();
     const svgRef = useRef();
+    const dimensions = useResizeObserver(wrapperRef);
 
     // Creating Line Chart in useEffect()
     useEffect(() => {
         console.log("useEffect running...")
+        console.log(dimensions);
+        // If dimensions are not set --> return nothing
+        if (!dimensions) return;
         if (!(Object.keys(percentageData).length === 0)) {
             console.log("stock data available...")
             console.log(percentageData)
@@ -60,11 +89,13 @@ const Chart = (props) => {
 
             // Dimensions of the chart
             const margin = 50;
-            const ctrwidth = parseInt(d3.select(svgRef.current).style("width")) - 2 * margin; // minus margins
-            console.log("ctrwidth: ", ctrwidth)
-            const ctrheight = parseInt(d3.select(svgRef.current).style("height")) - 2 * margin;
-            console.log("ctrheight: ", ctrheight)
+            const ctrwidth = dimensions.width - 2 * margin;
+            console.log("ctrwidth: ", ctrwidth);
+            const ctrheight = dimensions.height - 2 * margin;
+            console.log("ctrheight: ", ctrheight);
 
+
+            /*
             let dimensions = {
                 width: 1600,
                 height: 800,
@@ -72,7 +103,7 @@ const Chart = (props) => {
             };
             dimensions.ctrWidth = dimensions.width - 2 * dimensions.margins
             dimensions.ctrHeight = dimensions.height - 2 * dimensions.margins
-
+            */
             //let margin = {top: 20, right: 80, bottom: 30, left: 50};
             //let width = parseInt(d3.select(svgRef.current).style("width"));
             //console.log(width)
@@ -212,82 +243,20 @@ const Chart = (props) => {
                 .style("transform", `translateY(${ctrheight}px)`)
                 .attr("class", "x axis")
 
-
-            // Additional Properties for Axis to always show appropriate number of ticks
-
-
-        //xScale.range([0, width]);
-        //yScale.range([height, 0]);
-
-        function handleResize() {
-
-        let margins = 50
-        let width = parseInt(d3.select(svgRef.current).style("width")) - 2 * margins; // minus margins
-        console.log(width)
-        let height = parseInt(d3.select(svgRef.current).style("height")) -  2 * margins;
-        console.log(height)
-        xScale.range([0, width]);
-        yScale.range([height, 0]);
-
-
-
-        svg.select('.x.axis')
-            .style("transform", `translateY(${height}px)`)
-            .call(xAxis);
-
-        svg.select('.y.axis-right')
-            .style("transform", `translateX(${width}px)`)
-            .call(yAxisRight);
-
-        svg.select('.y.axis-left')
-            .call(yAxisLeft);
-
-        svg.select('.grid-x')
-            .attr("transform", `translate(0, ${height})`)
-            .call(make_x_gridlines()
-                .tickSize(-height)
-                .tickFormat(""));
-
-        svg.select('.grid-y')
-            //.attr("transform", `translate(0, ${width})`)
-            .call(make_y_gridlines()
-                .tickSize(-width)
-                .tickFormat(""));
-
-        svg.selectAll('.line-path') //path
-            .attr("d", d => lineGenerator(d.values)); // LineGenerator
-
-        xAxis.ticks(Math.max(width/75, 2));
-        yAxisRight.ticks(Math.max(height/50, 2));
-        yAxisLeft.ticks(Math.max(height/50, 2));
-}
-
-        window.addEventListener('resize', handleResize)
-
-
         }
 
         return () => {d3.select("g").remove()}
 
 
+    }, [data, rawData, percentageData, dimensions])
 
 
-
-    }, [data, rawData, percentageData])
-
-
-
-    // Resizing Chart on window object change
-    useEffect(() => {
-        //let width = parseInt(d3.select(svgRef.current).style("width"));
-        //console.log(width)
-        //let height = parseInt(d3.select(svgRef.current).style("height"));
-        //console.log(height)
-    }, [])
 
 
     return (
-        <svg ref={svgRef} className="svgchart"></svg>
+        <div ref={wrapperRef}>
+            <svg ref={svgRef} className="svgchart"></svg>
+        </div>
     );
 };
 
