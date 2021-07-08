@@ -7,7 +7,7 @@ import { Button } from 'antd';
 import { Tooltip } from 'antd';
 import { Modal, Switch  } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faBars, faCalendarWeek, faTag, faAdjust, faCalendarDay, faSun, faMoon, faInfoCircle, faToggleOn, faSearchPlus, faMousePointer} from '@fortawesome/free-solid-svg-icons'
+import { faCoffee, faBars, faCalendarWeek, faTag, faAdjust, faCalendarDay, faSun, faMoon, faInfoCircle, faToggleOn, faSearchPlus, faMousePointer, faChartArea} from '@fortawesome/free-solid-svg-icons'
 import { Select } from 'antd';
 
 
@@ -70,6 +70,10 @@ const Sidebar = (props) => {
         console.log(`switch to ${checked}`);
         props.handleTooltipSwitch(checked);
     }
+    const handleAreaChartSwitch = (checked) => {
+        console.log(`switch to ${checked}`);
+        props.handleAreaChartSwitch(checked);
+    }
 
 
     return(
@@ -118,15 +122,6 @@ const Sidebar = (props) => {
                 />
             </div>
             <div className="sidebar-theme-section">
-                <p className="sidebar-section-headline"><FontAwesomeIcon icon={faAdjust} className="sidebar-section-headline-icon"/>Choose Theme Settings</p>
-                <div className="theme-button-grid">
-                    <div className="theme-button-container">
-                        <Button onClick={themeToggler} data-value="Light" type = {(theme === "Light" ? "primary" : "")}><FontAwesomeIcon icon={faSun} className="sidebar-section-theme-icon"/>Light</Button>
-                        <Button onClick={themeToggler} data-value="Dark" type = {(theme === "Dark" ? "primary" : "")}><FontAwesomeIcon icon={faMoon} className="sidebar-section-theme-icon"/>Dark</Button>
-                    </div>
-                </div>
-            </div>
-            <div className="sidebar-theme-section">
                 <p className="sidebar-section-headline" style={{display: "inline"}}><FontAwesomeIcon icon={faMousePointer} className="sidebar-section-headline-icon"/>Hover Tooltip</p>
                 <Switch onChange={handleTooltipSwitch} style={{marginLeft: "15px", display: "inline"}}/>
 
@@ -135,6 +130,20 @@ const Sidebar = (props) => {
                 <p className="sidebar-section-headline" style={{display: "inline"}}><FontAwesomeIcon icon={faSearchPlus} className="sidebar-section-headline-icon"/>Zoom & Scroll</p>
                 <Switch style={{marginLeft: "15px", display: "inline"}}/>
 
+            </div>
+            <div className="sidebar-theme-section">
+                <p className="sidebar-section-headline" style={{display: "inline"}}><FontAwesomeIcon icon={faChartArea} className="sidebar-section-headline-icon"/>Area Chart</p>
+                <Switch onChange={handleAreaChartSwitch} style={{marginLeft: "15px", display: "inline"}}/>
+
+            </div>
+            <div className="sidebar-theme-section">
+                <p className="sidebar-section-headline"><FontAwesomeIcon icon={faAdjust} className="sidebar-section-headline-icon"/>Choose Theme Settings</p>
+                <div className="theme-button-grid">
+                    <div className="theme-button-container">
+                        <Button onClick={themeToggler} data-value="Light" type = {(theme === "Light" ? "primary" : "")}><FontAwesomeIcon icon={faSun} className="sidebar-section-theme-icon"/>Light</Button>
+                        <Button onClick={themeToggler} data-value="Dark" type = {(theme === "Dark" ? "primary" : "")}><FontAwesomeIcon icon={faMoon} className="sidebar-section-theme-icon"/>Dark</Button>
+                    </div>
+                </div>
             </div>
         </>
     );

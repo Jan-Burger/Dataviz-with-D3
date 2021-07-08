@@ -40,10 +40,15 @@ const App = () => {
     const [defaultDateRangeDropdownValue, setDefaultDateRangeDropdownValue] = useState("Last 3 Month");
     // Sate of Hover tooltip
     const [hoverTootipIsActive, setHoverTooltipIsActive] = useState(false);
+    // State of Area Chart
+    const [areaChartIsActive, setAreaChartIsActive] = useState(false);
 
     const handleTooltipSwitch = (checked) => {
         setHoverTooltipIsActive(checked);
     };
+    const handleAreaChartSwitch = (checked) => {
+        setAreaChartIsActive(checked);
+    }
 
     // Menu Toggle Handler
     const menuToggler = () => {
@@ -420,6 +425,7 @@ const App = () => {
             </div>
             <div className="nav-sidebar-navigation-area">
                 <Sidebar
+                handleAreaChartSwitch = {handleAreaChartSwitch}
                 handleTooltipSwitch = {handleTooltipSwitch}
                 defaultDateRangeDropdownValue = {defaultDateRangeDropdownValue}
                 minDate = {minDate}
@@ -449,6 +455,7 @@ const App = () => {
             <div className="content">
                 {isLoading ? <Spin tip="Loading..." size="large" className="spinner-content">
                     <Chart
+                    areaChartIsActive = {areaChartIsActive}
                     hoverTootipIsActive = {hoverTootipIsActive}
                     legend = {legend}
                     startdate = {startDate}
@@ -459,6 +466,7 @@ const App = () => {
                     />
                 </Spin> :
                     <Chart
+                    areaChartIsActive = {areaChartIsActive}
                     hoverTootipIsActive = {hoverTootipIsActive}
                     legend = {legend}
                     startdate = {startDate}

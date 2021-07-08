@@ -26,6 +26,8 @@ const useResizeObserver = (ref) => {
 
 const Chart = (props) => {
 
+
+
     //const [chartWidth, setChartWidth] = useState(parseInt(d3.select(svgRef.current).style("width")));
     //const [chartHeight, setChartHeight] = useState(parseInt(d3.select(svgRef.current).style("height")));
 
@@ -62,14 +64,28 @@ const Chart = (props) => {
     //}
     //console.log(percentageData)
 
+    // ORDER OF ALL D3 STEPS:
+    // 1. Transform the Data from state into a single array for further processing
+    // 2. Declare Dimensions of the chart
+    // 3. Select SVG Element via Ref() and append a g-element
+    // 4. ...
+
     // Declaring svg Ref
     const tooltipRef = useRef();
     const wrapperRef = useRef();
     const svgRef = useRef();
     const dimensions = useResizeObserver(wrapperRef);
+    const [currentZoomState, setCurrentZoomState] = useState();
+    const [event, setEvent] = useState();
+    const [d, setD] = useState();
+
+
 
     // Creating Line Chart in useEffect()
     useEffect(() => {
+
+
+
         console.log("useEffect running...")
         console.log(dimensions);
         // If dimensions are not set --> return nothing
@@ -127,6 +143,8 @@ const Chart = (props) => {
                 .attr("transform", `translate(${margin}, 60)`)
 
 
+
+
             // Accessor functions (Preparing Data to be used by D3)
             const parseDate = d3.timeParse("%Y-%m-%d")
             const xAccessor = d => parseDate(d.date)
@@ -134,23 +152,121 @@ const Chart = (props) => {
             //console.log(xAccessor(xvalues[0]))
 
 
+
             // Scales
-            const xScale = d3.scaleUtc()
+            let xScale = d3.scaleUtc()
                 .domain(d3.extent(DataArray, xAccessor))
                 .range([0, ctrwidth])
 
-            const yScale = d3.scaleLinear()
+            let yScale = d3.scaleLinear()
                 .domain(d3.extent(DataArray, yAccessor))
                 .range([ctrheight, 0])
                 .nice()
+
+
             //console.log(xScale(xAccessor(xvalues[0])), xvalues[0])
-
-
             // Create Line Generator with scaled x and y values
-            const lineGenerator = d3.line()
+            let lineGenerator = d3.line()
                 .x((d) => xScale(xAccessor(d)))
                 .y((d) => yScale(yAccessor(d)))
             //console.log(lineGenerator(data))
+
+
+            // Check if zoomstate is defined - if yes --> rescale everything
+
+            if (currentZoomState) {
+                if (currentZoomState.k !== 1) {
+                    /*
+                    console.log(event);
+                    console.log(d);
+                    console.log(currentZoomState);
+                    //d3.select(svgRef.current)
+                    //    .selectAll("g")
+                    //   .attr('transform', currentZoomState);
+                    //ctr.attr("transform", currentZoomState.toString());
+                    //ctr.attr("transform", `translate(${currentZoomState.x},0)`);
+                    //svg.attr("translate(" + currentZoomState + ")" + " scale(" +currentZoomState + ")")
+                    let newxScale = event.rescaleX(xScale);
+                    //yScale = currentZoomState.rescaleY(yScale);
+                    xScale.domain(newxScale.domain());
+                    xScale.range(newxScale.range().map(d =>  event.applyX(d)));
+                    console.log(xScale.domain());
+                    console.log(xScale.range());
+                    //xAxis.scale(newxScale);
+                    //d3.select(".x.axis").call(xAxis).attr("transform", `translate(${currentZoomState.x},60)`);
+
+                    //lineGenerator = d3.line()
+                     //   .x((d) => newxScale(xAccessor(d)))
+                    //    .y((d) => yScale(yAccessor(d)))
+
+                    //ctr.selectAll(".line-path")
+                        //.data(nestedData)
+                        //.enter()
+                    //    .attr("d", d => lineGenerator(d.values))
+                        //.attr("transform", `translate(${currentZoomState.x},-60)`);
+
+
+                    //xScale.range([0, ctrwidth])
+                     //   .domain(d => currentZoomState.applyX(d));
+
+                    //ctr.selectAll(".line-path")
+                    //    .attr("d", d => lineGenerator(d.values))
+                     //   .attr("transform", `translate(${currentZoomState.x},60)`);
+
+                    //svg.select(".x.axis")
+                    //    .attr("transform", `translate(${currentZoomState.x},0)`);
+                        //.call(d3.axisBottom(xScale)
+                            //.tickSizeOuter(0));
+
+                    //d3.select(svgRef.current).selectAll("g").selectAll("g").remove()
+                    //const newXScale = currentZoomState.rescaleX(xScale);
+                    //xScale.domain(newXScale.domain());
+
+                    // Update all line-plot elements with new line method that incorporates transform
+                    //ctr.selectAll(".line-path")
+                     //   .attr("d", d => lineGenerator(d.values))
+                     //   .attr("transform", currentZoomState)
+
+                    /*
+                    // Rescale axes using current zoom transform state
+                    d3.select(".x.axis").call(xAxis.scale(currentZoomState.rescaleX(xScale)));
+                    d3.select(".y.axis-right").call(yAxisRight.scale(currentZoomState.rescaleY(yScale)));
+                    d3.select(".y.axis-left").call(yAxisLeft.scale(currentZoomState.rescaleY(yScale)));
+
+                    // Create new scales that incorporate current zoom transform on original scale
+                    xScale = currentZoomState.rescaleX(xScale);
+                    yScale = currentZoomState.rescaleY(yScale);
+
+                    // Apply new scale to create new definition of d3.line method for path drawing of line plots
+                    lineGenerator = d3.line()
+                        .x((d) => xScale(xAccessor(d)))
+                        .y((d) => yScale(xAccessor(d)));
+
+                    ctr.selectAll(".line-path")
+                        .attr("d", d => lineGenerator(d.values))
+                        //.attr("transform", currentZoomState)
+
+
+
+                    //d3.select(svgRef.current)
+                     //   .selectAll("g")
+                     //   .attr('transform', `translate(${currentZoomState.x},0)`);
+
+                        // g.selectALL(".line-path")
+                    */
+
+
+                }
+            }
+
+
+
+
+
+
+
+
+
 
             // Nest the Data to display multiple lines
             const nestedData = nest()
@@ -158,7 +274,6 @@ const Chart = (props) => {
                 .entries(DataArray)
 
             console.log(nestedData)
-
 
             console.log("Colors data from legend:")
             let colors = [];
@@ -173,19 +288,14 @@ const Chart = (props) => {
                 .domain(res)
                 .range(colors)
 
-            // Adding Path Element to the container
-            ctr.selectAll(".line-path")
-                .data(nestedData)
-                .enter()
-                .append("path")
-                .attr("d", d => lineGenerator(d.values))
-                .attr("fill", "none")
-                .attr("stroke", d => color(d.key))
-                .attr("stroke-width", 2)
-                .attr("class", "line-path") // later on add styles in app.less file and remove them here
+
+            // D3 Area chart declerations - this will only be used if props.areaChartIsActive is true
+            let area = d3.area()
+              .x(function(d) { return xScale(xAccessor(d)); })
+              .y0(yScale.range()[0])
+              .y1(function(d) { return yScale(yAccessor(d)); });
 
 
-            // --- Adding Axis and background grid --- //
 
             // gridlines in x axis function
             function make_x_gridlines() {
@@ -214,6 +324,53 @@ const Chart = (props) => {
                     .tickSize(-ctrwidth)
                     .tickFormat("")
             )
+
+            if (props.areaChartIsActive) {
+
+                // Adding Path Element to the container
+                ctr.selectAll(".line-path")
+                    .data(nestedData)
+                    .enter()
+                    .append("path")
+                    .attr("d", d => area(d.values))
+                    .attr("fill", d => color(d.key))
+                    .attr("stroke", d => color(d.key))
+                    .attr("stroke-width", 2)
+                    .attr("class", "line-path") // later on add styles in app.less file and remove them here
+            }else {
+
+                // Adding Path Element to the container
+                ctr.selectAll(".line-path")
+                    .data(nestedData)
+                    .enter()
+                    .append("path")
+                    .attr("d", d => lineGenerator(d.values))
+                    .attr("fill", "none")
+                    .attr("stroke", d => color(d.key))
+                    .attr("stroke-width", 2)
+                    .attr("class", "line-path") // later on add styles in app.less file and remove them here
+            }
+
+            const focus = ctr.append('g')
+              .attr('class', 'focus')
+              //.style('display', 'none');
+
+            focus.append('circle')
+              .attr('r', 4.5);
+
+            focus.append('line')
+              .classed('x', true);
+
+            focus.append('line')
+              .classed('y', true);
+
+            focus.append('text')
+              .attr('x', 9)
+              .attr('dy', '.35em');
+
+            // --- Adding Axis and background grid --- //
+
+
 
 
             // Y Axis left
@@ -245,6 +402,15 @@ const Chart = (props) => {
                 .call(xAxis)
                 .style("transform", `translateY(${ctrheight}px)`)
                 .attr("class", "x axis")
+
+
+
+
+
+
+
+
+
 
 
             /* --- Hover action and tooltip --- */
@@ -300,7 +466,7 @@ const Chart = (props) => {
                             if (d.values.find(value => value.date == resultDate.toISOString().slice(0,10))){
                                 return `${d.key}: ${Math.round((d.values.find(value => value.date == resultDate.toISOString().slice(0,10)).close + Number.EPSILON) * 100) / 100}%`
                             }else {
-                                return "No Data"
+                                return `${d.key}: No Data`
                             }
 
                         });
@@ -331,13 +497,97 @@ const Chart = (props) => {
             }
 
 
+            // Zoom behaviour
+            const zoomBehaviour = d3.zoom()
+                .scaleExtent([1, 5])
+                .translateExtent([[0,0],[ctrwidth, ctrheight]])
+                .on("zoom", (event, d) => {
+                    console.log(event);
+                    console.log(event.transform);
+                    const zoomState = d3.zoomTransform(svg.select("g").node());
+                    console.log(svg.select("g").node());
+                    setCurrentZoomState(zoomState);
+                    setEvent(event.transform);
+                    setD(d);
+                    console.log(zoomState);
+                    let newxScale = zoomState.rescaleX(xScale);
+                    //yScale = currentZoomState.rescaleY(yScale);
+                    //xScale.domain(newxScale.domain());
+                    //xScale.range(newxScale.range().map(d =>  zoomState.applyX(d)));
+                    //console.log(xScale.domain());
+                    //console.log(xScale.range());
+                    ctr.attr("transform", `translate(${zoomState.x},0)`);
+                    // Rescale axes using current zoom transform state
+                    d3.select(".x.axis").call(xAxis.scale(zoomState.rescaleX(xScale)));
+                    //d3.select(".y.axis-right").call(yAxisRight.scale(zoomState.rescaleY(yScale)));
+                    //d3.select(".y.axis-left").call(yAxisLeft.scale(zoomState.rescaleY(yScale)));
+
+                    // Create new scales that incorporate current zoom transform on original scale
+                    xScale = zoomState.rescaleX(xScale);
+                    //yScale = zoomState.rescaleY(yScale);
+                    console.log(xScale.domain());
+
+                    // Apply new scale to create new definition of d3.line method for path drawing of line plots
+                    lineGenerator = d3.line()
+                        .x((d) => xScale(xAccessor(d)))
+                        .y((d) => yScale(xAccessor(d)));
+
+                    ctr.selectAll(".line-path")
+                        .data(nestedData)
+                        .enter()
+                        .append("path")
+                        .attr("d", d => lineGenerator(d.values))
+                        .attr("fill", "none")
+                        .attr("stroke", d => color(d.key))
+                        .attr("stroke-width", 2)
+                        .attr("class", "line-path") // later on add styles in app.less file and remove them here
+                });
+
+            svg.call(zoomBehaviour);
+
+            /*
+            svg.call(zoom);
+            function zoom(svg) {
+
+                var extent = [
+                    [margin, margin],
+                    [ctrwidth, ctrheight]
+                ];
+
+                var zooming = d3.zoom()
+                    .scaleExtent([1, 5])
+                    .translateExtent(extent)
+                    .extent(extent)
+                    .on("zoom", zoomed);
+
+                svg.call(zooming);
+
+                function zoomed() {
+                    const zoomState = d3.zoomTransform(svg.node());
+                    const newXScale = zoomState.rescaleX(xScale);
+                    xScale.range(newXScale.range());
+
+                    //xScale.range([0, ctrwidth])
+                     //   .map(d => zoomState.applyX(d));
+
+                    svg.selectAll(".line-path")
+                        .attr("d", d => lineGenerator(d.values));
+
+                    svg.select(".x.axis")
+                        .call(d3.axisBottom(xScale)
+                            .tickSizeOuter(0));
+                }
+            }
+            */
+
+
 
         }
 
-        return () => {d3.select("g").remove()}
+        return () => {d3.selectAll("g").remove()}
 
 
-    }, [data, rawData, percentageData, dimensions, props.hoverTootipIsActive])
+    },[data, rawData, percentageData, dimensions, props.hoverTootipIsActive, currentZoomState, props.areaChartIsActive])
 
 
 
